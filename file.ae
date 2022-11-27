@@ -1,0 +1,15 @@
+uno = 1;
+variable = 10*2+uno*2;
+otro = "1hola " + "nop";
+
+Mybool = verdadero;
+
+si uno*2+2*2 == 6: START;
+    uno = 10;
+END;
+
+funcion holas(arg1): START;
+    holas = arg1;
+END;
+holas(10);
+imprimir(uno, otro);
