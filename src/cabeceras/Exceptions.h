@@ -1,4 +1,5 @@
-#pragma once
+#ifndef Exceptions_h
+#define Exceptions_h
 #include <iostream>
 #include <string>
 
@@ -55,3 +56,4 @@ namespace Exceptions
     };
 
 }
+#endif

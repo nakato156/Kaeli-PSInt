@@ -1,5 +1,6 @@
-#include "Funcion.cpp"
+#include "Array.cpp"
 #include "Stack.cpp"
+#include "Funcion.cpp"
 #include "Tokenizer.cpp"
 #include "./Funciones_nativas.cpp"
 
@@ -11,6 +12,7 @@ namespace Evaluadores
 {   
     class Variables {
     private:
+        map<string, Array> arrays;
         map<string, Token> variables;
         map<string, Funcion> funciones;
     public:
@@ -19,6 +21,7 @@ namespace Evaluadores
         
         int size(){ return variables.size(); }
         
+        void agregar(string nombre, Array arr){ arrays[nombre] = arr; }
         void agregar(string nombre, Token token) { variables[nombre] = token; }
         void agregar(string nombre, Funcion func) { funciones[nombre] = func; }
         
@@ -28,9 +31,12 @@ namespace Evaluadores
             if(variables.find(nombre) != variables.end()) return variables[nombre];
             throw NameError(nombre);
         }
+
         friend ostream& operator <<(ostream &os, const Variables &vars){
             os << "{" << endl;
             for(auto &item: vars.variables) 
+                os << "\t" << item.first << ": " << item.second << "," << endl;
+            for(auto &item: vars.arrays) 
                 os << "\t" << item.first << ": " << item.second << "," << endl;
             for(auto &item: vars.funciones) 
                 os << "\t" << item.first << ": " << item.second << "," << endl;
@@ -40,7 +46,7 @@ namespace Evaluadores
     };
     
     void run(vector<Token>&, Variables&);
-    Token eval_expresion(vector<Token>::iterator&, vector<Token>&, Variables&, bool);
+    Stack eval_expresion(vector<Token>::iterator&, vector<Token>&, Variables&, bool);
     
     Funcion Variables::getFunc(string name){ return funciones[name]; }
     
@@ -48,7 +54,11 @@ namespace Evaluadores
         vector<Token> contenido = func.getContenido(), returned = func.getSentReturn();
         runner(contenido, args);
         vector<Token>::iterator it = returned.begin();
-        if (returned.size() > 0 ) return eval_expresion(it, returned, args, false);
+        if (returned.size() > 0 ) {
+            Stack stack = eval_expresion(it, returned, args, false);
+            auto token = stack.get_stack();
+            if(token.getLinea() != -1) return token;
+        }
         return Token("NADA", contenido.back().getLinea());
     };
 
@@ -104,7 +114,31 @@ namespace Evaluadores
         vars.agregar(nombre_fun.getValor(), func);
     }
 
-    Token eval_expresion(vector<Token>::iterator &it, vector<Token> &tokens, Variables &vars, bool block = false){
+    Array eval_arreglo(vector<Token>::iterator &it, vector<Token> &tokens, Variables &vars){
+        Token token;
+        int i = 0;
+        auto arreglo = Array();
+        for(; it != tokens.end(); it++){
+            token = *it;
+            if(token.getValor() == ",") continue;
+            if(token.getValor() == "[") {
+                ++i;
+                continue;
+            }
+            if(token.getValor() == "]"){
+                if(i-1 == 0){
+                    i--; break;
+                }
+                continue;
+            }
+            if(token.getTipo() == IDENTIFICADOR) token = vars[token.getValor()];
+            arreglo.addItem(token);
+        }
+        if(i != 0) throw EOLError(token);
+        return arreglo;
+    }
+
+    Stack eval_expresion(vector<Token>::iterator &it, vector<Token> &tokens, Variables &vars, bool block = false){
         Token token;
         Stack myStack = Stack(tokens);
         for(; it != tokens.end(); it++){
@@ -112,18 +146,22 @@ namespace Evaluadores
             if(block && token.getValor() == ":") break;
             if(token.getTipo() == END) break;
             if(token.getTipo() == IDENTIFICADOR) token = vars[token.getValor()];
+            else if(token.getValor() == "[") {
+                auto arr = eval_arreglo(it, tokens, vars);
+                myStack.agregar(arr, it);
+                continue;
+            }
             myStack.agregar(token, it);
         }
         if (block && it->getValor() != ":") throw EOLError(it->getLinea()); 
         else if (!block && it->getTipo() != END)throw EOLError(it->getLinea()); 
-        token = myStack.get_stack();
-        return token;
+        return myStack;
     }  
 
     void eval_condicion(vector<Token>::iterator &it, vector<Token> &tokens, Variables &vars){
         it++;
-        Token expr = eval_expresion(it, tokens, vars, true);
-        // cout << "expr: " << bool(expr) << endl;
+        Stack stack = eval_expresion(it, tokens, vars, true);
+        Token expr = stack.get_stack();
         
         it++;
         if(it->getTipo() != START_BLOCK) throw TokenError(it->getLinea());
@@ -149,7 +187,13 @@ namespace Evaluadores
             Token tk = *it_pgma;
             if(tk.getTipo() == IDENTIFICADOR && next(it_pgma)->getTipo() == ASIGNACION){
                 it_pgma+= 2;
-                variables.agregar(tk.getValor(), eval_expresion(it_pgma, pgma, variables));
+                Stack stack = eval_expresion(it_pgma, pgma, variables);
+                auto expr = stack.get_stack();
+                if(expr.getLinea() != -1) variables.agregar(tk.getValor(), expr);
+                else {
+                    variables.agregar(tk.getValor(), stack.get_array());
+                    cout << variables << endl;
+                }
             }
             else if (tk.getTipo() == IDENTIFICADOR && next(it_pgma)->getValor() == "(") {
                 it_pgma++;

@@ -16,6 +16,17 @@ Token Stack::operar(Token val1, string op, Token val2){
     throw TokenError(val2.getLinea());
 }
 
+void Stack::agregar(Array arr, vector<Token>::iterator &it){
+    Token tk = *next(it);
+    if(tk.getValor() == "=" && next(it)->getValor() == "="){
+        return;
+    }
+    else if(tk.getTipo() == END) { 
+        array_tks = arr.getContenido();
+    }
+    else throw TypeError("array", it->getNombreTipo(), it->getLinea());
+}
+
 void Stack::agregar(Token tk, vector<Token>::iterator &it){
     Token val1, val2, res;
     string op;
@@ -65,10 +76,15 @@ void Stack::agregar(Token tk, vector<Token>::iterator &it){
     }
 }
 
+vector<Token> Stack::get_array(){ return array_tks; };
+
 Token Stack::get_stack(){
     string op;
 
-    if(operadores.size() == 0) return valores[0];
+    if(operadores.size() == 0) {
+        if(valores.size() != 0) return valores[0];
+        return Token("NADA", -1);
+    }
     else{
         vector<Token>::iterator it_op; 
         Token token;
