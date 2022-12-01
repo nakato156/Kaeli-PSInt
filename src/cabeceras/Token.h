@@ -1,14 +1,14 @@
-#pragma once
+#ifndef TOKEN
+#define TOKEN
 #include "definiciones.h"
-#include <map>
 #include <iostream>
 #include <string>
+#include <map>
 
 class Token
 {
 protected:
     std::string valor;
-private:
     int tipo, num_linea;
     std::map<std::string, int> tipos_precedencia = {
         { "+", 1 }, { "-", 1 },
@@ -53,3 +53,4 @@ public:
 
     friend std::ostream& operator <<(std::ostream& os, const Token& tk);
 };
+#endif

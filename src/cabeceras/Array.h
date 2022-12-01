@@ -4,8 +4,9 @@
 #include <vector>
 
 class Array : public Token {
-public:
+protected:
     std::vector<Token> lista;
+public:
     Array() = default;
     Array(std::vector<Token>);
     ~Array() = default;

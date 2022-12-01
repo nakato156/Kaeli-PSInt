@@ -76,7 +76,7 @@ void Stack::agregar(Token tk, vector<Token>::iterator &it){
     }
 }
 
-vector<Token> Stack::get_array(){ return array_tks; };
+Array Stack::get_array(){ return array_tks; };
 
 Token Stack::get_stack(){
     string op;

@@ -1,5 +1,6 @@
-#pragma once
-#include "Array.h"
+#ifndef STACK
+#define STACK
+#include "Valor.h"
 #include <vector>
 
 class Stack
@@ -15,6 +16,7 @@ public:
     Token operar(Token, std::string, Token);
     void agregar(Array arr, vector<Token>::iterator &it);
     void agregar(Token tk, std::vector<Token>::iterator&);
-    vector<Token> get_array();
+    Array get_array();
     Token get_stack();
 };
+#endif

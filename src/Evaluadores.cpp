@@ -1,4 +1,4 @@
-#include "Array.cpp"
+#include "Valor.cpp"
 #include "Stack.cpp"
 #include "Funcion.cpp"
 #include "Tokenizer.cpp"
@@ -12,23 +12,27 @@ namespace Evaluadores
 {   
     class Variables {
     private:
-        map<string, Array> arrays;
+        map<string, Valor> arrays;
         map<string, Token> variables;
         map<string, Funcion> funciones;
     public:
         Variables() = default;
-        Variables(map<string, Token> vars): variables(vars) {}
         
         int size(){ return variables.size(); }
         
-        void agregar(string nombre, Array arr){ arrays[nombre] = arr; }
+        void agregar(string nombre, Valor arr){ arrays[nombre] = arr; }
         void agregar(string nombre, Token token) { variables[nombre] = token; }
         void agregar(string nombre, Funcion func) { funciones[nombre] = func; }
         
         Funcion getFunc(string nombre);
+        Valor getArr(string nombre){
+            if(arrays.find(nombre) != arrays.end()) return arrays[nombre];
+            throw NameError(nombre);
+        };
 
         Token operator [](const string nombre) { 
             if(variables.find(nombre) != variables.end()) return variables[nombre];
+            else if(arrays.find(nombre) != arrays.end()) return Token("NADA", -1);
             throw NameError(nombre);
         }
 
@@ -161,7 +165,7 @@ namespace Evaluadores
     void eval_condicion(vector<Token>::iterator &it, vector<Token> &tokens, Variables &vars){
         it++;
         Stack stack = eval_expresion(it, tokens, vars, true);
-        Token expr = stack.get_stack();
+        Valor expr = stack.get_stack();
         
         it++;
         if(it->getTipo() != START_BLOCK) throw TokenError(it->getLinea());
@@ -190,10 +194,7 @@ namespace Evaluadores
                 Stack stack = eval_expresion(it_pgma, pgma, variables);
                 auto expr = stack.get_stack();
                 if(expr.getLinea() != -1) variables.agregar(tk.getValor(), expr);
-                else {
-                    variables.agregar(tk.getValor(), stack.get_array());
-                    cout << variables << endl;
-                }
+                else variables.agregar(tk.getValor(), Valor(Array(stack.get_array())));
             }
             else if (tk.getTipo() == IDENTIFICADOR && next(it_pgma)->getValor() == "(") {
                 it_pgma++;

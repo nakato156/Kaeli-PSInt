@@ -14,4 +14,4 @@ END;
 holas(10);
 imprimir(uno, otro);
 array = [1, 2, "holas", falso];
-imprimir(array);
+imprimir("a", array);
