@@ -14,7 +14,7 @@ public:
     void add_valores(Token tk);
     void add_operadores(Token tk);
     Token operar(Token, std::string, Token);
-    void agregar(Array arr, vector<Token>::iterator &it);
+    void agregar(Valor val, vector<Token>::iterator &it);
     void agregar(Token tk, std::vector<Token>::iterator&);
     Array get_array();
     Token get_stack();

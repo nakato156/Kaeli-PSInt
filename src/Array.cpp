@@ -5,6 +5,7 @@
 using namespace std;
 
 Array::Array(vector<Token> arr): lista(arr) {}
+Array::Array(Token tk): Token(tk) {}
 vector<Token> Array::getContenido() { return lista; }
 int Array::length(){ return lista.size(); }
 

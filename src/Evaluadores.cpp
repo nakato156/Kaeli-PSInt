@@ -12,35 +12,27 @@ namespace Evaluadores
 {   
     class Variables {
     private:
-        map<string, Valor> arrays;
-        map<string, Token> variables;
+        map<string, Valor> variables;
         map<string, Funcion> funciones;
     public:
         Variables() = default;
         
         int size(){ return variables.size(); }
         
-        void agregar(string nombre, Valor arr){ arrays[nombre] = arr; }
-        void agregar(string nombre, Token token) { variables[nombre] = token; }
+        void agregar(string nombre, Valor arr){ variables[nombre] = arr; }
+        void agregar(string nombre, Token token) { variables[nombre] = Valor(token); }
         void agregar(string nombre, Funcion func) { funciones[nombre] = func; }
         
-        Funcion getFunc(string nombre);
-        Valor getArr(string nombre){
-            if(arrays.find(nombre) != arrays.end()) return arrays[nombre];
-            throw NameError(nombre);
-        };
+        Funcion getFunc(string nombre){ return funciones[nombre]; };
 
         Token operator [](const string nombre) { 
             if(variables.find(nombre) != variables.end()) return variables[nombre];
-            else if(arrays.find(nombre) != arrays.end()) return Token("NADA", -1);
             throw NameError(nombre);
         }
 
         friend ostream& operator <<(ostream &os, const Variables &vars){
             os << "{" << endl;
             for(auto &item: vars.variables) 
-                os << "\t" << item.first << ": " << item.second << "," << endl;
-            for(auto &item: vars.arrays) 
                 os << "\t" << item.first << ": " << item.second << "," << endl;
             for(auto &item: vars.funciones) 
                 os << "\t" << item.first << ": " << item.second << "," << endl;
@@ -51,9 +43,7 @@ namespace Evaluadores
     
     void run(vector<Token>&, Variables&);
     Stack eval_expresion(vector<Token>::iterator&, vector<Token>&, Variables&, bool);
-    
-    Funcion Variables::getFunc(string name){ return funciones[name]; }
-    
+        
     Token call_funcion(Funcion func, void(*runner)(vector<Token>&, Variables&), Variables args){
         vector<Token> contenido = func.getContenido(), returned = func.getSentReturn();
         runner(contenido, args);
@@ -152,10 +142,10 @@ namespace Evaluadores
             if(token.getTipo() == IDENTIFICADOR) token = vars[token.getValor()];
             else if(token.getValor() == "[") {
                 auto arr = eval_arreglo(it, tokens, vars);
-                myStack.agregar(arr, it);
+                myStack.agregar(Valor(arr), it);
                 continue;
             }
-            myStack.agregar(token, it);
+            myStack.agregar(Valor(token), it);
         }
         if (block && it->getValor() != ":") throw EOLError(it->getLinea()); 
         else if (!block && it->getTipo() != END)throw EOLError(it->getLinea()); 

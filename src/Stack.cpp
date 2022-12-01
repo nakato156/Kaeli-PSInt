@@ -16,9 +16,15 @@ Token Stack::operar(Token val1, string op, Token val2){
     throw TokenError(val2.getLinea());
 }
 
-void Stack::agregar(Array arr, vector<Token>::iterator &it){
+void Stack::agregar(Valor val, vector<Token>::iterator &it){
+    if(!val.is_array()){
+        Token tk = val.getToken();
+        agregar(tk, it);
+        return;
+    }
+    Array arr = val.getArray();
     Token tk = *next(it);
-    if(tk.getValor() == "=" && next(it)->getValor() == "="){
+    if(tk.getValor() == "=" && (it + 1)->getValor() == "="){
         return;
     }
     else if(tk.getTipo() == END) { 

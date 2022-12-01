@@ -8,6 +8,7 @@ protected:
     std::vector<Token> lista;
 public:
     Array() = default;
+    Array(Token);
     Array(std::vector<Token>);
     ~Array() = default;
     int length();
