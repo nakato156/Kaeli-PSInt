@@ -11,6 +11,7 @@ private:
 public:
     Tokenizer();
     Tokenizer(std::vector<std::string> lineas);
+    Tokenizer(std::string command);//Para nuestro interprete.
     Token get();
     Token get(int n);
     int size();

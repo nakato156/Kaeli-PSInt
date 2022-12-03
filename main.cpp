@@ -10,27 +10,123 @@ using namespace Evaluadores;
 
 string filename = "file.ae";
 
-int main(int argc, char *argv[]){
-	string linea;
-	ifstream file(filename.c_str());
+void config_all(vector<string> opcions){
 
-	vector<string> lineas;
+}
+int interprete(){
+	int sub=0;//para cambiar de >> a .. cuando hay una condición.
+	char line[500];
+	Variables vars;
 	vector<Token> pgma;
+	vector<string> lineas;
+	cout<<MSG_INIT<<endl<<"Version: "<< VERSION_PROGRAM;//No se porque no puedo hacer "<<endl;"
+	cout<<endl;
+	while (true)
+	{
+		if (!sub) // No esta anidando nada.
+		{
+			cout << ">> ";
+		}
+		else // Esta anidando algo.
+		{
+			cout<<"...";
+		}
+		string linea;
+		try
+		{
+			cin>> line;
+			linea=line;
+			if (linea.find(":")!=string::npos){//Vemos si hay anidamiento.
+				sub+=1;
+			}else if(linea.find("END")!=string::npos){
+				if(sub<=0){//Espera no hubo nada que desanidar ;(
+					cout<<"ERROR no hay anidamiento que quitar";
+					sub=0;
+					continue;
+				}
+				else{//ya salimos de la condicion, por lo que podemos interpretar todo.
+					sub-=1;
+					pgma=Tokenizer(lineas).getTokens();
+					run(pgma,vars);
+					lineas.clear();//A juro debemos vaciarlo.
+				}
+			}
+			if(sub>0)//Estamos dentro de una condicion, funcion, etc.. y debemos almacenar las cadenas sigueintes.
+				lineas.push_back(linea);
+			else{//Podemos interpretar linea a linea.
+				pgma = Tokenizer(linea).getTokens();
+				run(pgma, vars);
+			}
+		}
+		catch (const BaseError &e)
+		{
+			int num_linea = e.getLinea(e);
+			cerr << e.what() << linea << endl;
+			exit(EXIT_FAILURE);
+		}
+	}
+}
+int main(int argc, char *argv[])
+{
+	string linea;
+	if (argc > 1)
+	{
+		vector<string> param;
+		vector<string> url_file;
+		for (int i = 1; i < argc; i++)
+		{
+			string opcions = argv[i];
+			if (!opcions.find("-")!=string::npos)// si tiene - entonces es una funcion, de lo contrario, la url de un archivo
+			{
+				url_file.push_back(opcions.c_str());
+				continue;
+			}
+			else
+			{
+				param.push_back(opcions.c_str());
+			}
+		}
+		if (!param.empty()){
+			config_all(param);
+		}
+		if (!url_file.empty())//Si agrego un achivo, por lo que no llamaremos al interprete.
+		{
+			//Por ahora solo se soporta un archivo por programa.
+			ifstream file(url_file[0].c_str());
+			if (!file.good())
+			{
+				printf("El archivo no existe, revisa el enlace.");
+				return -1;
+			}
 
-	while(getline(file, linea)) lineas.push_back(linea);
-	file.close();
-	
-	try {
-		pgma = Tokenizer(lineas).getTokens();
+			vector<string> lineas;
+			vector<Token> pgma;
 
-		Variables variables;
+			while (getline(file, linea))
+				lineas.push_back(linea);
+			file.close();
 
-		run(pgma, variables);
-		if(argc >= 2 && string(argv[1]) == "dev") cout << variables;
-	} catch(const BaseError& e) {
-		int num_linea = e.getLinea(e);
-    	cerr << e.what() << lineas[num_linea] << endl;
-        exit(EXIT_FAILURE);
-    }
+			try
+			{
+				pgma = Tokenizer(lineas).getTokens();
+
+				Variables variables;
+
+				run(pgma, variables);
+				if (argc >= 2 && string(argv[1]) == "dev")
+					cout << variables;
+			}
+			catch (const BaseError &e)
+			{
+				int num_linea = e.getLinea(e);
+				cerr << e.what() << lineas[num_linea] << endl;
+				exit(EXIT_FAILURE);
+			}
+		}else{//Llamamos al interprete.
+			return interprete();
+		}
+	}else{//No hubo ningun parametro y llamamos al interprete.
+		return interprete();
+	}
 	return 0;
 }
