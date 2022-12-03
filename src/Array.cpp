@@ -35,6 +35,6 @@ ostream& operator <<(ostream& os, const Array& arr){
         os << lista[i]; 
         if(i + 1 != size) os << ", ";
     }
-    os << " ]" << endl;
+    os << " ]";
     return os;
 }

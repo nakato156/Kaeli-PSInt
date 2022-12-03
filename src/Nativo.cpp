@@ -2,11 +2,14 @@
 
 using namespace std;
 
-Token Nativo::imprimir(vector<Token> args, string end = "\n", string sep = " "){
-    Token i;
-    for(auto i: args) cout << i << sep;
+Token Nativo::imprimir(vector<Valor> args, string end = "\n", string sep = " "){
+    Valor tk;
+    for(Valor i: args) {
+        cout << i << sep;
+        tk = i;
+    }
     cout << end;
-    return Token(string("NADA"), i.getLinea());
+    return Token(string("NADA"), tk.getLinea());
 }
 
 /*

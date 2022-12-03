@@ -25,7 +25,7 @@ namespace Evaluadores
         
         Funcion getFunc(string nombre){ return funciones[nombre]; };
 
-        Token operator [](const string nombre) { 
+        Valor operator [](const string nombre) { 
             if(variables.find(nombre) != variables.end()) return variables[nombre];
             throw NameError(nombre);
         }
@@ -56,8 +56,8 @@ namespace Evaluadores
         return Token("NADA", contenido.back().getLinea());
     };
 
-    Token call_native_func(Token token_func, vector<Token> &args, Variables &vars){
-        vector<Token> parse_args;
+    Token call_native_func(Token token_func, vector<Valor> &args, Variables &vars){
+        vector<Valor> parse_args;
         string name_func = token_func.getValor();
         int linea = token_func.getLinea();
         for(auto var: args)
@@ -65,8 +65,8 @@ namespace Evaluadores
         return Funciones_Nativas::call(name_func, parse_args, linea);
     }
 
-    vector<Token> procesar_args(vector<Token>::iterator &it, vector<Token> &tokens){
-        vector<Token> args;
+    vector<Valor> procesar_args(vector<Token>::iterator &it, vector<Token> &tokens){
+        vector<Valor> args;
         int fin = 1;
         for(; it != tokens.end(); it++){
             if(it->getValor() == ")" && fin - 1 == 0) break;
@@ -188,7 +188,7 @@ namespace Evaluadores
             }
             else if (tk.getTipo() == IDENTIFICADOR && next(it_pgma)->getValor() == "(") {
                 it_pgma++;
-                vector<Token> args = procesar_args(++it_pgma, pgma);
+                vector<Valor> args = procesar_args(++it_pgma, pgma);
                 Funcion func = variables.getFunc(tk.getValor());
                 vector<Token> funcArgs = func.getArgs();
                 Variables scope_vars;

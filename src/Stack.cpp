@@ -18,11 +18,11 @@ Token Stack::operar(Token val1, string op, Token val2){
 
 void Stack::agregar(Valor val, vector<Token>::iterator &it){
     if(!val.is_array()){
-        Token tk = val.getToken();
+        Token tk = val;
         agregar(tk, it);
         return;
     }
-    Array arr = val.getArray();
+    Array arr = val;
     Token tk = *next(it);
     if(tk.getValor() == "=" && (it + 1)->getValor() == "="){
         return;
