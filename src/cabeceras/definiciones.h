@@ -16,6 +16,8 @@
 #define FLOAT 11
 #define START_BLOCK 12
 #define END_BLOCK 13
+#define MSG_INIT "Bienvenido."
 
 std::string Operadores = "=(),.+-*/<>[];:!~";
+unsigned const char* VERSION_PROGRAM="V1.0";
 #endif
