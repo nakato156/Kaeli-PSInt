@@ -1,4 +1,3 @@
-#include <any>
 #include "cabeceras/Token.h"
 #include "cabeceras/definiciones.h"
 #include "auxiliares/helpers.cpp"
