@@ -37,7 +37,7 @@ int interprete(){
 			gets(c_linea);
 			if (strstr(c_linea,":")!=NULL){//Vemos si hay anidamiento.
 				sub+=1;
-			}else if(strstr(c_linea,"END")!=NULL){
+			}else if(strstr(c_linea,"END;")!=NULL || strstr(c_linea,"END")!=NULL){//Pongo END; || END porque no consique END; como una cadena parecida a END.
 				if(sub<=0){//Espera no hubo nada que desanidar ;(
 					cout<<"ERROR no hay anidamiento que quitar";
 					sub=0;
