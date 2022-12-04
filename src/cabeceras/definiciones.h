@@ -19,5 +19,5 @@
 #define MSG_INIT "Bienvenido."
 
 std::string Operadores = "=(),.+-*/<>[];:!~";
-unsigned const char* VERSION_PROGRAM="V1.0";
+const char* VERSION_PROGRAM="V1.0";
 #endif

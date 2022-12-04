@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <string.h>
+#include <stdio.h>
 #include "src/Evaluadores.cpp"
 
 using namespace std;
@@ -15,7 +16,7 @@ void config_all(vector<string> opcions){
 }
 int interprete(){
 	int sub=0;//para cambiar de >> a .. cuando hay una condición.
-	char line[500];
+	char c_linea[500];
 	Variables vars;
 	vector<Token> pgma;
 	vector<string> lineas;
@@ -31,37 +32,30 @@ int interprete(){
 		{
 			cout<<"...";
 		}
-		string linea;
 		try
 		{
-			cin>> line;
-			linea=line;
-			if (linea.find(":")!=string::npos){//Vemos si hay anidamiento.
+			gets(c_linea);
+			if (strstr(c_linea,":")!=NULL){//Vemos si hay anidamiento.
 				sub+=1;
-			}else if(linea.find("END")!=string::npos){
+			}else if(strstr(c_linea,"END")!=NULL){
 				if(sub<=0){//Espera no hubo nada que desanidar ;(
 					cout<<"ERROR no hay anidamiento que quitar";
 					sub=0;
 					continue;
 				}
-				else{//ya salimos de la condicion, por lo que podemos interpretar todo.
-					sub-=1;
-					pgma=Tokenizer(lineas).getTokens();
-					run(pgma,vars);
-					lineas.clear();//A juro debemos vaciarlo.
-				}
+				sub-=1;
 			}
-			if(sub>0)//Estamos dentro de una condicion, funcion, etc.. y debemos almacenar las cadenas sigueintes.
-				lineas.push_back(linea);
-			else{//Podemos interpretar linea a linea.
-				pgma = Tokenizer(linea).getTokens();
+			lineas.push_back(string(c_linea));
+			if(sub==0){//Podemos interpretar linea a linea.
+				pgma = Tokenizer(lineas).getTokens();
 				run(pgma, vars);
+				lineas.clear();
 			}
 		}
 		catch (const BaseError &e)
 		{
 			int num_linea = e.getLinea(e);
-			cerr << e.what() << linea << endl;
+			cerr << e.what() << c_linea << endl;
 			exit(EXIT_FAILURE);
 		}
 	}
