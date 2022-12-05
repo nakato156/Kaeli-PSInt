@@ -14,14 +14,17 @@ string filename = "file.ae";
 void config_all(vector<string> opcions){
 
 }
+
 int interprete(){
-	int sub=0;//para cambiar de >> a .. cuando hay una condición.
-	char c_linea[500];
+	int sub = 0;	//para cambiar de >> a .. cuando hay una condición.
+	const int MAX_LONG_LINEA = 500;
+	char c_linea[MAX_LONG_LINEA];
 	Variables vars;
 	vector<Token> pgma;
 	vector<string> lineas;
-	cout<<MSG_INIT<<endl<<"Version: "<< VERSION_PROGRAM;//No se porque no puedo hacer "<<endl;"
-	cout<<endl;
+	
+	cout << MSG_INIT << endl << "Version: " << VERSION_PROGRAM << endl;
+	
 	while (true)
 	{
 		if (!sub) // No esta anidando nada.
@@ -30,23 +33,24 @@ int interprete(){
 		}
 		else // Esta anidando algo.
 		{
-			cout<<"...";
+			cout << "...";
 		}
 		try
 		{
-			gets(c_linea);
+			cin.getline(c_linea, MAX_LONG_LINEA);
 			if (strstr(c_linea,":")!=NULL){//Vemos si hay anidamiento.
-				sub+=1;
+				sub += 1;
 			}else if(strstr(c_linea,"END;")!=NULL || strstr(c_linea,"END")!=NULL){//Pongo END; || END porque no consique END; como una cadena parecida a END.
-				if(sub<=0){//Espera no hubo nada que desanidar ;(
-					cout<<"ERROR no hay anidamiento que quitar";
-					sub=0;
+				if(sub <= 0){//Espera no hubo nada que desanidar ;(
+					cout << "ERROR \nno hay anidamiento que quitar";
+					sub = 0;
 					continue;
 				}
-				sub-=1;
+				sub -= 1;
 			}
+
 			lineas.push_back(string(c_linea));
-			if(sub==0){//Podemos interpretar linea a linea.
+			if(sub == 0){//Podemos interpretar linea a linea.
 				pgma = Tokenizer(lineas).getTokens();
 				run(pgma, vars);
 				lineas.clear();
@@ -60,6 +64,7 @@ int interprete(){
 		}
 	}
 }
+
 int main(int argc, char *argv[])
 {
 	string linea;
@@ -75,10 +80,7 @@ int main(int argc, char *argv[])
 				url_file.push_back(opcions.c_str());
 				continue;
 			}
-			else
-			{
-				param.push_back(opcions.c_str());
-			}
+			param.push_back(opcions.c_str());
 		}
 		if (!param.empty()){
 			config_all(param);
@@ -89,8 +91,8 @@ int main(int argc, char *argv[])
 			ifstream file(url_file[0].c_str());
 			if (!file.good())
 			{
-				printf("El archivo no existe, revisa el enlace.");
-				return -1;
+				printf("El archivo no existe, revise la ruta.");
+				exit(EXIT_FAILURE);
 			}
 
 			vector<string> lineas;
@@ -109,6 +111,7 @@ int main(int argc, char *argv[])
 				run(pgma, variables);
 				if (argc >= 2 && string(argv[1]) == "dev")
 					cout << variables;
+				exit(EXIT_SUCCESS);
 			}
 			catch (const BaseError &e)
 			{
@@ -116,11 +119,8 @@ int main(int argc, char *argv[])
 				cerr << e.what() << lineas[num_linea] << endl;
 				exit(EXIT_FAILURE);
 			}
-		}else{//Llamamos al interprete.
-			return interprete();
 		}
-	}else{//No hubo ningun parametro y llamamos al interprete.
-		return interprete();
 	}
+	interprete();
 	return 0;
 }
