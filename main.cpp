@@ -20,8 +20,7 @@ int interprete(){
 	Variables vars;
 	vector<Token> pgma;
 	vector<string> lineas;
-	cout<<MSG_INIT<<endl<<"Version: "<< VERSION_PROGRAM;//No se porque no puedo hacer "<<endl;"
-	cout<<endl;
+	cout<<MSG_INIT<<endl<<"Version: "<< VERSION_PROGRAM << endl;
 	while (true)
 	{
 		if (!sub) // No esta anidando nada.
@@ -34,7 +33,7 @@ int interprete(){
 		}
 		try
 		{
-			gets(c_linea);
+			fgets(c_linea, 500, stdin);
 			if (strstr(c_linea,":")!=NULL){//Vemos si hay anidamiento.
 				sub+=1;
 			}else if(strstr(c_linea,"END;")!=NULL || strstr(c_linea,"END")!=NULL){//Pongo END; || END porque no consique END; como una cadena parecida a END.
