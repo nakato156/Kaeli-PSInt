@@ -5,11 +5,11 @@
 #include <stdio.h>
 #include "src/Evaluadores.cpp"
 
+#define MAX_LONG_LINEA 500
+
 using namespace std;
 using namespace Exceptions;
 using namespace Evaluadores;
-
-string filename = "file.ae";
 
 void config_all(vector<string> opcions){
 
@@ -17,12 +17,10 @@ void config_all(vector<string> opcions){
 
 int interprete(){
 	int sub = 0;	//para cambiar de >> a .. cuando hay una condición.
-	const int MAX_LONG_LINEA = 500;
 	char c_linea[MAX_LONG_LINEA];
 	Variables vars;
 	vector<Token> pgma;
 	vector<string> lineas;
-	
 	cout << MSG_INIT << endl << "Version: " << VERSION_PROGRAM << endl;
 	
 	while (true)
@@ -75,7 +73,7 @@ int main(int argc, char *argv[])
 		for (int i = 1; i < argc; i++)
 		{
 			string opcions = argv[i];
-			if (!opcions.find("-")!=string::npos)// si tiene - entonces es una funcion, de lo contrario, la url de un archivo
+			if (opcions.find("-")!=string::npos)// si tiene - entonces es una funcion, de lo contrario, la url de un archivo
 			{
 				url_file.push_back(opcions.c_str());
 				continue;
