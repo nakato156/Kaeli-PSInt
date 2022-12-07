@@ -166,7 +166,7 @@ namespace Evaluadores
         vector<Token> tmp_tokens;
         int cont_start = 1;
         for(; it != tokens.end(); it++){
-            if(it->getTipo() == END_BLOCK && !cont_start - 1) break;
+            if(it->getTipo() == END_BLOCK && !(cont_start - 1)) break;
             else if(it->getTipo() == START_BLOCK) cont_start++;
             else if(it->getTipo() == END_BLOCK) cont_start--;
             if(expr) tmp_tokens.push_back(*it);
