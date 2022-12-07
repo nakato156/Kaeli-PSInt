@@ -1,9 +1,9 @@
 # Kaeli-PSInt
 
-Kaeli-PSInt Es un nuevo intérprete con nueva sintaxis en español, que combina un poco de pascal, python y c, creando así este es un nuevo pseudo-lenguaje.<br>
+Kaeli-PSInt Es un nuevo intérprete con nueva sintaxis en español, que combina un poco de pascal, python y c, creando así este nuevo pseudo-lenguaje.<br>
 
 Está destinado para los estudiantes, para que se familiaricen en el mundo de la programación, y puedan crear sus propias lógicas.
-## ¿Como compilarlo?:
+## ¿Como compilarlo?
 
 Si tienes gcc(mingw en windows) y también la herramienta make puedes aprovechar y usar de una nuestro makefile y hacer la compilación sin muchos problemas, sino puedes usar tu compilador que más te guste.<br/>
 Para descargar gcc y make:
@@ -51,7 +51,7 @@ END;
 Nota: `START;` indica el inicio y `END;` el final del bloque.
 
 ## Uso:
-Para llamar al intérprete no hace falta pasar ningún argumento, pero si quieres hacer que interprete un archivo se llama al intérprete y le pasas la ubicación del archivo, de la siguiente forma:
+El programa posee un modo interactivo, este aparece cuando se ejecuta el intérprete sin ningún argumento. Si se desea ejecutar un archivo se llama al intértprete y como primer argumento va la ubicación del archivo con extensión `ae`. Aquí un ejemplo.
 
 * REM CMD Windows:
 ```
