@@ -23,12 +23,17 @@ namespace Evaluadores
         void agregar(string nombre, Token token) { variables[nombre] = Valor(token); }
         void agregar(string nombre, Funcion func) { funciones[nombre] = func; }
         
+        void eliminar(string nombre){
+            if(variables.find(nombre) != variables.end()) variables.erase(nombre);
+        }
+
         Funcion getFunc(string nombre){ return funciones[nombre]; };
 
         Valor operator [](const string nombre) { 
             if(variables.find(nombre) != variables.end()) return variables[nombre];
             throw NameError(nombre);
         }
+
 
         friend ostream& operator <<(ostream &os, const Variables &vars){
             os << "{" << endl;
@@ -175,6 +180,66 @@ namespace Evaluadores
         if(expr) run(tmp_tokens, vars);
     }
 
+    vector<Token> procesar_bloque(vector<Token>::iterator &it, vector<Token> tokens){
+        vector<Token> bloque;
+        int cont_start = 1;
+        for(; it != tokens.end(); it++){
+            if(it->getTipo() == END_BLOCK && !(cont_start - 1)) {
+                it++;
+                break;
+            }
+            else if(it->getValor() == ":") cont_start++;
+            bloque.push_back(*it);
+        }
+        return bloque;
+    }
+
+    void eval_for(vector<Token>::iterator &it, vector<Token> &tokens, Variables &vars){
+        Token var_control = *(++it);
+        int linea_var_control = var_control.getLinea();
+        vector<Token> contenido_for;
+        it++;
+
+        if(it->getValor() == "desde"){
+            int inicio, fin;
+            it++;
+            inicio = it->getTipo() == IDENTIFICADOR ? vars[it->getValor()].parse<int>() : it->parse<int>();
+            vars.agregar(var_control.getValor(), Token(to_string(inicio), linea_var_control));
+            it += 2;
+            fin = it->getTipo() == IDENTIFICADOR ? vars[it->getValor()].parse<int>() : it->parse<int>();
+            it+=2;
+
+            contenido_for = procesar_bloque(it, tokens);
+
+            for(; inicio < fin; inicio++){
+                vars.agregar(var_control.getValor(), Token(to_string(inicio), linea_var_control));
+                run(contenido_for, vars);
+            }
+            vars.eliminar(var_control.getValor());
+        }else if (it->getValor() == "en"){
+            Token iterable_ = *(++it);
+            vector<Token> iterable;
+
+            if(iterable_.getValor() == "[") 
+                iterable = eval_arreglo(it, tokens, vars).getContenido();
+            else if(iterable_.getTipo() == STRING){
+                string valor = iterable_.getValor();
+                for(const auto &c: valor) 
+                    iterable.push_back(Token('"' + c + '"', iterable_.getLinea()));
+            }
+            
+            it += 2;
+            contenido_for = procesar_bloque(it, tokens);
+            
+            for(auto elemento: iterable){
+                vars.agregar(var_control.getValor(), elemento);
+                run(contenido_for, vars);
+            }
+        }
+
+
+    }
+
     void run(vector<Token> &pgma, Variables &variables){
         vector<Token>::iterator it_pgma;
         for(it_pgma = pgma.begin(); it_pgma != pgma.end(); it_pgma++){
@@ -199,6 +264,7 @@ namespace Evaluadores
             }
             else if (tk.getTipo() == CONDICION) eval_condicion(it_pgma, pgma, variables);
             else if (tk.getTipo() == FUNCION) eval_func(it_pgma, pgma, variables);
+            else if (tk.getTipo() == FOR) eval_for(it_pgma, pgma, variables);
         }
     }
 

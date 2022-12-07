@@ -16,6 +16,8 @@
 #define FLOAT 11
 #define START_BLOCK 12
 #define END_BLOCK 13
+#define FOR 14
+#define WHILE 15
 #define MSG_INIT "Bienvenido."
 
 std::string Operadores = "=(),.+-*/<>[];:!~";

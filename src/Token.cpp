@@ -42,6 +42,8 @@ Token::Token(string tk, int linea){
     else if (tk == "START") tipo = START_BLOCK;
     else if (tk == "END") tipo = END_BLOCK;
     else if (tk == "NADA") tipo = NADA;
+    else if (tk == "iterar") tipo = FOR;
+    else if (tk == "mientras") tipo = WHILE;
     else if (tk == "verdadero" || tk == "falso") tipo = BOOL;
     else if (tk == "si" || tk == "sino") tipo = CONDICION;
     else if (tk == "funcion") tipo = FUNCION;
