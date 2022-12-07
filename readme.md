@@ -1,6 +1,6 @@
 # Kaeli-PSInt
 
-Kaeli-PSInt Es un nuevo intérprete con nueva sintaxis en español, que combina un poco de pascal, python y c, creando así este nuevo pseudo-lenguaje.<br>
+Kaeli-PSInt Es un nuevo intérprete con nueva sintaxis en español y basado en python, creando así este nuevo pseudo-lenguaje.<br>
 
 Está destinado para los estudiantes, para que se familiaricen en el mundo de la programación, y puedan crear sus propias lógicas.
 ## ¿Como compilarlo?
@@ -65,4 +65,4 @@ Kaeli-PSInt.exe url_of_file.ae
 
 ## Futuras actualizaciones:
 * Se quiere agregar color a los errores y un poco al intérprete, por lo que se utilizara la biblioteca ncurses para ello.
-* implementación de bucles (`while` y `for`)
+* Implementación del bucle `while`
