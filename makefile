@@ -13,7 +13,7 @@ ifdef $(IF_DEBUG)
 endif
 
 $(MAIN_BIN) : ./main.cpp
-	g++ $(CXXFLAG) -o $(MAIN_BIN) ./main.cpp $(OBJ)
+	g++ $(CXXFLAG) -std=c++20 -o $(MAIN_BIN) ./main.cpp $(OBJ)
 
 .PHONY: clean
 clean:
