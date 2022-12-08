@@ -224,8 +224,8 @@ namespace Evaluadores
                 iterable = eval_arreglo(it, tokens, vars).getContenido();
             else if(iterable_.getTipo() == STRING){
                 string valor = iterable_.getValor();
-                for(const auto &c: valor) 
-                    iterable.push_back(Token('"' + c + '"', iterable_.getLinea()));
+                for(char c: valor) 
+                    iterable.push_back(Token('"' + string(1, c) + '"', iterable_.getLinea()));
             }
             
             it += 2;
