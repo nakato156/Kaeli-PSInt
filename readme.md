@@ -50,7 +50,43 @@ END;
 ```
 Nota: `START;` indica el inicio y `END;` el final del bloque.
 
-## Uso:
+También existe el típico ciclo `for`, que tiene 2 variantes
+
+* iterar en un rango
+
+Esta variante tiene como sintaxis:
+
+```
+iterar variable_control desde inicio hasta fin:
+    // codigo
+END;
+```
+Un ejemplo:
+```
+iterar x desde 1 hasta 10:
+    imprimir(x);
+END;
+```
+
+* iterar en un iterable
+
+Existen 2 tipos de iterables, los `strings` y `arrays`.
+
+La sintaxis de esta variante sería:
+
+```
+iterar variable_control en iterable:
+    //codigo
+END;
+```
+Un ejemplo:
+```
+iterar x en [1, 2 , "holas", verdadero]:
+    imprimir(x);
+END;
+```
+
+## Uso
 El programa posee un modo interactivo, este aparece cuando se ejecuta el intérprete sin ningún argumento. Si se desea ejecutar un archivo se llama al intértprete y como primer argumento va la ubicación del archivo con extensión `ae`. Aquí un ejemplo.
 
 * REM CMD Windows:
