@@ -68,8 +68,8 @@ int main(int argc, char *argv[])
 	string linea;
 	if (argc > 1)
 	{
-		vector<string> param;
-		vector<string> url_file;
+		vector<string> params, url_file;
+
 		for (int i = 1; i < argc; i++)
 		{
 			string opcion = argv[i];
@@ -78,12 +78,9 @@ int main(int argc, char *argv[])
 				url_file.push_back(opcion.c_str());
 				continue;
 			}
-			param.push_back(opcion.c_str());
+			params.push_back(opcion.substr(1));
 		}
-		if (!param.empty()){
-			config_all(param);
-		}
-		
+
 		if (!url_file.empty())//Si agrego un achivo, por lo que no llamaremos al interprete.
 		{
 			//Por ahora solo se soporta un archivo por programa.
@@ -108,7 +105,7 @@ int main(int argc, char *argv[])
 				Variables variables;
 
 				run(pgma, variables);
-				if (argc >= 2 && string(argv[1]) == "dev")
+				if(std::find(params.begin(), params.end(), "dev") != params.end()) 
 					cout << variables;
 				exit(EXIT_SUCCESS);
 			}
