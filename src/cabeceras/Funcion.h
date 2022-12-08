@@ -1,3 +1,5 @@
+#ifndef FUNCION_h
+#define FUNCION_h
 #include "Token.h"
 #include <vector>
 
@@ -14,3 +16,4 @@ public:
     std::vector<Token> getArgs();
     friend std::ostream& operator <<(std::ostream& os, const Funcion& func);
 };
+#endif

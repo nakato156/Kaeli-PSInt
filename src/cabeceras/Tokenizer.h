@@ -1,5 +1,5 @@
-#pragma once
-
+#ifndef TOKENIZER_h
+#define TOKENIZER_h
 #include "definiciones.h"
 #include <iostream>
 #include <vector>
@@ -18,3 +18,4 @@ public:
     std::vector<Token> getTokens();
     Token operator [](int index);
 };
+#endif
