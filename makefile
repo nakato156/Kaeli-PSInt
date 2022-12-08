@@ -1,8 +1,8 @@
 
-OBJ=
-MAIN_BIN="./main.exe"
-IF_DEBUG=
-CXXFLAG=-Wall
+OBJ =
+MAIN_BIN = "./main.exe"
+IF_DEBUG =
+CXXFLAG = -std=c++20
 
 ifeq ($(strip $(OS)),Linux)
 	MAIN_BIN="./main"
@@ -13,7 +13,7 @@ ifdef $(IF_DEBUG)
 endif
 
 $(MAIN_BIN) : ./main.cpp
-	g++ $(CXXFLAG) -std=c++20 -o $(MAIN_BIN) ./main.cpp $(OBJ)
+	g++ $(CXXFLAG) -o $(MAIN_BIN) ./main.cpp $(OBJ)
 
 .PHONY: clean
 clean:
