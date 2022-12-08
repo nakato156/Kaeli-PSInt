@@ -72,17 +72,18 @@ int main(int argc, char *argv[])
 		vector<string> url_file;
 		for (int i = 1; i < argc; i++)
 		{
-			string opcions = argv[i];
-			if (opcions.find("-")!=string::npos)// si tiene - entonces es una funcion, de lo contrario, la url de un archivo
+			string opcion = argv[i];
+			if (opcion.find('-') == string::npos)// si tiene - entonces es una funcion, de lo contrario, la url de un archivo
 			{
-				url_file.push_back(opcions.c_str());
+				url_file.push_back(opcion.c_str());
 				continue;
 			}
-			param.push_back(opcions.c_str());
+			param.push_back(opcion.c_str());
 		}
 		if (!param.empty()){
 			config_all(param);
 		}
+		
 		if (!url_file.empty())//Si agrego un achivo, por lo que no llamaremos al interprete.
 		{
 			//Por ahora solo se soporta un archivo por programa.
