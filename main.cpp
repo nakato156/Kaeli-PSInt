@@ -68,23 +68,22 @@ int main(int argc, char *argv[])
 	string linea;
 	if (argc > 1)
 	{
-		vector<string> params, url_file;
+		vector<string> params, path_files;
 
 		for (int i = 1; i < argc; i++)
 		{
 			string opcion = argv[i];
-			if (opcion.find('-') == string::npos)// si tiene - entonces es una funcion, de lo contrario, la url de un archivo
+			if (opcion.find('-') == string::npos)
 			{
-				url_file.push_back(opcion.c_str());
+				path_files.push_back(opcion.c_str());
 				continue;
 			}
 			params.push_back(opcion.substr(1));
 		}
 
-		if (!url_file.empty())//Si agrego un achivo, por lo que no llamaremos al interprete.
+		if (!path_files.empty())
 		{
-			//Por ahora solo se soporta un archivo por programa.
-			ifstream file(url_file[0].c_str());
+			ifstream file(path_files[0].c_str());
 			if (!file.good())
 			{
 				printf("El archivo no existe, revise la ruta.");
