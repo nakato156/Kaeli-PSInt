@@ -26,6 +26,10 @@ TokenError::TokenError(int num_linea){
 const char* TokenError::what() const throw(){ return message.c_str(); }
 
 TypeError::TypeError(){}
+TypeError::TypeError(string msg, int num_linea){
+    message = msg + "\n";
+    this->num_linea = --num_linea;
+}
 TypeError::TypeError(string tipo1, string tipo2, int num_linea){
     this->num_linea = num_linea -1;
     message += "\nNo se puede operar " + tipo1 + " con " + tipo2 + " en:\n" + to_string(num_linea) + " | ";
@@ -41,3 +45,10 @@ NameError::NameError(string identificador, int num_linea){
     this->num_linea = --num_linea;
 }
 const char * NameError::what() const throw(){ return message.c_str(); }
+
+ArgumentError::ArgumentError() = default;
+ArgumentError::ArgumentError(string argumento, int num_linea){
+    message += "No se ha reconocid el argumento `" + argumento + "` en la línea:\n";
+    this->num_linea = --num_linea;
+}
+const char * ArgumentError::what() const throw(){ return message.c_str(); }

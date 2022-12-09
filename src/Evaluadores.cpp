@@ -28,34 +28,66 @@ namespace Evaluadores
         vector<Valor> parse_args;
         string name_func = token_func.getValor();
         int linea = token_func.getLinea();
-        for(auto var: args)
+        for(auto &var: args)
             parse_args.push_back(var.getTipo() == IDENTIFICADOR ? vars[var.getValor()] : var);
         return Funciones_Nativas::call(name_func, parse_args, linea);
     }
 
-    vector<Valor> procesar_args(vector<Token>::iterator &it, vector<Token> &tokens){
+    vector<Valor> procesar_simple_args(vector<Token>::iterator &it, vector<Token> &tokens){
         vector<Valor> args;
-        int fin = 1;
+        int fin = 1, i = 0;
         for(; it != tokens.end(); it++){
             if(it->getValor() == ")" && fin - 1 == 0) break;
             else if(it->getValor() == "(") fin++;
             else if(it->getValor() == ")") fin--;
             else if(it->getValor() == ",") continue;
-            else args.push_back(*it);
+            args.push_back(*it);
+        }
+        return args;
+    }
+
+    map<string, Valor> procesar_kwargs(vector<Token>::iterator &it, vector<Token> &tokens, vector<Token> &argsFunc){
+        map<string, Valor> args;
+        int fin = 1, i = 0;
+        for(; it != tokens.end(); it++){
+            if(it->getValor() == ")" && fin - 1 == 0) break;
+            else if(it->getValor() == "(") fin++;
+            else if(it->getValor() == ")") fin--;
+            else if(it->getValor() == ",") continue;
+            else {
+                Valor tk;
+                if(next(it)->getValor() == "=") {
+                    tk = *it;
+                    bool flag = false;
+                    
+                    for(auto arg: argsFunc) {
+                        flag = arg.getValor() == it->getValor();
+                        if(flag) break;
+                    }
+                    if(!flag) throw ArgumentError(it->getValor(), it->getLinea());     
+                    it += 2;               
+                } else tk = argsFunc[i++];
+                
+                if(args.find(tk.getValor()) != args.end()) 
+                    throw TypeError("El argumento `" + tk.getValor()  + "` recibe multiples valores", it->getLinea());
+                
+                args[tk.getValor()] = *it;
+            }
         }
         return args;
     }
 
     Token llamar_funcion(Token token_func, vector<Token>::iterator &it, vector<Token> tokens, Variables &vars){
-        vector<Valor> args = procesar_args(++it, tokens);
         Funcion func = vars.getFunc(token_func.getValor());
-        vector<Token> funcArgs = func.getArgs();
-        Variables scope_vars;
-
+        
         if(!func.getNombre().empty()) {
-            for(int i = 0; i < funcArgs.size(); i++) scope_vars.agregar(funcArgs[i].getValor(), args[i]);
+            vector<Token> funcArgs = func.getArgs();
+            map<string, Valor> args = procesar_kwargs(++it, tokens, funcArgs);
+            Variables scope_vars = args;
             return call_new_funcion(func, run, scope_vars);
         }
+
+        vector<Valor> args = procesar_simple_args(++it, tokens);
         return call_native_func(token_func, args, vars);
     }
 
@@ -72,7 +104,8 @@ namespace Evaluadores
                 if(next(it)->getValor() != ":" && next(it, 2)->getTipo() != START_BLOCK && next(it, 3)->getTipo() != END) throw TokenError(it->getLinea());
                 it+= 4;
             }
-            if(add_args) args.push_back(*it);
+            if(it->getValor() == ",") continue;
+            else if(add_args) args.push_back(*it);
             else if(it->getValor() == "retornar"){
                 for(; it != tokens.end(); it++){
                     if(it->getTipo() == END_BLOCK) break;

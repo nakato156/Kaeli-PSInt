@@ -41,6 +41,7 @@ namespace Exceptions
         std::string message;
     public:
         TypeError();
+        TypeError(std::string, int);
         TypeError(std::string, std::string, int);
         const char * what() const throw();
     };
@@ -52,6 +53,15 @@ namespace Exceptions
         NameError();
         NameError(std::string);
         NameError(std::string, int);
+        const char * what() const throw();
+    };
+
+    class ArgumentError : public BaseError {
+    private:
+        std::string message;
+    public:
+        ArgumentError();
+        ArgumentError(std::string, int);
         const char * what() const throw();
     };
 

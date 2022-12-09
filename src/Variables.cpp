@@ -11,7 +11,7 @@ private:
     map<string, Funcion> funciones;
 public:
     Variables() = default;
-    
+    Variables(map<string, Valor> vars): variables(vars) {}
     int size(){ return variables.size(); }
     
     void agregar(string nombre, Valor arr){ variables[nombre] = arr; }
