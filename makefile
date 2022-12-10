@@ -39,7 +39,6 @@ $(MAIN_BIN) : $(MAIN_OBJ) $(OBJ_S)
 	@echo "\e24[Compilando el binario."
 	$(CXX) $(CXXFLAG) $(MAIN_OBJ) $(OBJ_S) -o $(MAIN_BIN) 2> logs.txt
 
-#Descartamos esto porque genera error en el linker que ya no tengo animo de solucionar.
 $(MAIN_OBJ) : ./main.cpp
 	@echo "Compilando archivo objeto $@"
 	$(CXX) $(CXXFLAG) -c -o $@ $< 2>logs_obj.txt
