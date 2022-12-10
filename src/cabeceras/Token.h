@@ -38,6 +38,8 @@ public:
     int getLinea();
     int getPrecedencia();
 
+    Token& operator++();
+    Token operator++(int);
     Token operator ==(Token& tk);
     Token operator >=(Token& tk);
     Token operator <=(Token& tk);

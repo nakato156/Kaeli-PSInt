@@ -11,20 +11,20 @@ private:
     map<string, Funcion> funciones;
 public:
     Variables() = default;
-    Variables(map<string, Valor> vars): variables(vars) {}
+    Variables(map<string, Valor> &vars): variables(vars) {}
     int size(){ return variables.size(); }
     
-    void agregar(string nombre, Valor arr){ variables[nombre] = arr; }
-    void agregar(string nombre, Token token) { variables[nombre] = Valor(token); }
-    void agregar(string nombre, Funcion func) { funciones[nombre] = func; }
+    void agregar(string nombre, Valor &arr){ variables[nombre] = arr; }
+    void agregar(string nombre, Token &token) { variables[nombre] = Valor(token); }
+    void agregar(string nombre, Funcion &func) { funciones[nombre] = func; }
     
     void eliminar(string nombre){
         if(variables.find(nombre) != variables.end()) variables.erase(nombre);
     }
 
-    Funcion getFunc(string nombre){ return funciones[nombre]; };
+    Funcion& getFunc(string nombre){ return funciones[nombre]; };
 
-    Valor operator [](const string nombre) { 
+    Valor& operator [](const string nombre) { 
         if(variables.find(nombre) != variables.end()) return variables[nombre];
         throw NameError(nombre);
     }

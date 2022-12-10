@@ -12,7 +12,7 @@ namespace Evaluadores
     void run(vector<Token>&, Variables&);
     Stack eval_expresion(vector<Token>::iterator&, vector<Token>&, Variables&, bool);
         
-    Token call_new_funcion(Funcion func, void(*runner)(vector<Token>&, Variables&), Variables args){
+    Token call_new_funcion(Funcion &func, void(*runner)(vector<Token>&, Variables&), Variables &args){
         vector<Token> contenido = func.getContenido(), returned = func.getSentReturn();
         runner(contenido, args);
         vector<Token>::iterator it = returned.begin();
@@ -24,16 +24,13 @@ namespace Evaluadores
         return Token("NADA", contenido.back().getLinea());
     };
 
-    Token call_native_func(Token token_func, vector<Valor> &args, Variables &vars){
-        vector<Valor> parse_args;
+    Token call_native_func(Token &token_func, vector<Valor> &args, Variables &vars){
         string name_func = token_func.getValor();
         int linea = token_func.getLinea();
-        for(auto &var: args)
-            parse_args.push_back(var.getTipo() == IDENTIFICADOR ? vars[var.getValor()] : var);
-        return Funciones_Nativas::call(name_func, parse_args, linea);
+        return Funciones_Nativas::call(name_func, args, linea);
     }
 
-    vector<Valor> procesar_simple_args(vector<Token>::iterator &it, vector<Token> &tokens){
+    vector<Valor> procesar_simple_args(vector<Token>::iterator &it, vector<Token> &tokens, Variables &vars){
         vector<Valor> args;
         int fin = 1, i = 0;
         for(; it != tokens.end(); it++){
@@ -41,7 +38,9 @@ namespace Evaluadores
             else if(it->getValor() == "(") fin++;
             else if(it->getValor() == ")") fin--;
             else if(it->getValor() == ",") continue;
-            args.push_back(*it);
+            
+            if(it->getTipo() == IDENTIFICADOR) args.push_back(vars[it->getValor()]);
+            else args.push_back(*it);
         }
         return args;
     }
@@ -77,7 +76,7 @@ namespace Evaluadores
         return args;
     }
 
-    Token llamar_funcion(Token token_func, vector<Token>::iterator &it, vector<Token> tokens, Variables &vars){
+    Token llamar_funcion(Token token_func, vector<Token>::iterator &it, vector<Token> &tokens, Variables &vars){
         Funcion func = vars.getFunc(token_func.getValor());
         
         if(!func.getNombre().empty()) {
@@ -87,7 +86,7 @@ namespace Evaluadores
             return call_new_funcion(func, run, scope_vars);
         }
 
-        vector<Valor> args = procesar_simple_args(++it, tokens);
+        vector<Valor> args = procesar_simple_args(++it, tokens, vars);
         return call_native_func(token_func, args, vars);
     }
 
@@ -193,7 +192,7 @@ namespace Evaluadores
         if(expr) run(tmp_tokens, vars);
     }
 
-    vector<Token> procesar_bloque(vector<Token>::iterator &it, vector<Token> tokens){
+    vector<Token> procesar_bloque(vector<Token>::iterator &it, vector<Token> &tokens){
         vector<Token> bloque;
         int cont_start = 1;
         for(; it != tokens.end(); it++){
@@ -217,15 +216,17 @@ namespace Evaluadores
             int inicio, fin;
             it++;
             inicio = it->getTipo() == IDENTIFICADOR ? vars[it->getValor()].parse<int>() : it->parse<int>();
-            vars.agregar(var_control.getValor(), Token(to_string(inicio), linea_var_control));
+            Token tk = Token(to_string(inicio), linea_var_control);
+            vars.agregar(var_control.getValor(), tk);
             it += 2;
             fin = it->getTipo() == IDENTIFICADOR ? vars[it->getValor()].parse<int>() : it->parse<int>();
             it+=2;
 
             contenido_for = procesar_bloque(it, tokens);
-
+            
+            if(contenido_for.empty()) return;
             for(; inicio < fin; inicio++){
-                vars.agregar(var_control.getValor(), Token(to_string(inicio), linea_var_control));
+                ++vars[var_control.getValor()];
                 run(contenido_for, vars);
             }
             vars.eliminar(var_control.getValor());
@@ -244,6 +245,7 @@ namespace Evaluadores
             it += 2;
             contenido_for = procesar_bloque(it, tokens);
             
+            if(contenido_for.empty()) return;
             for(auto elemento: iterable){
                 vars.agregar(var_control.getValor(), elemento);
                 run(contenido_for, vars);
@@ -257,20 +259,42 @@ namespace Evaluadores
         vector<Token>::iterator it_pgma;
         for(it_pgma = pgma.begin(); it_pgma != pgma.end(); it_pgma++){
             Token tk = *it_pgma;
-            if(tk.getTipo() == IDENTIFICADOR && next(it_pgma)->getTipo() == ASIGNACION){
-                it_pgma+= 2;
-                Stack stack = eval_expresion(it_pgma, pgma, variables);
-                auto expr = stack.get_stack();
-                if(expr.getLinea() != -1) variables.agregar(tk.getValor(), expr);
-                else variables.agregar(tk.getValor(), Valor(Array(stack.get_array())));
+
+            switch (tk.getTipo())
+            {
+            case IDENTIFICADOR:
+                if (next(it_pgma)->getValor() == "(") {
+                    llamar_funcion(tk, ++it_pgma, pgma, variables);
+                    break;
+                }
+
+                switch (next(it_pgma)->getTipo())
+                {
+                case ASIGNACION: {
+                    it_pgma += 2;
+                    Stack stack = eval_expresion(it_pgma, pgma, variables);
+                    auto expr = stack.get_stack();
+                    if(expr.getLinea() != -1) variables.agregar(tk.getValor(), expr);
+                    else {
+                        Valor val = Valor(Array(stack.get_array()));
+                        variables.agregar(tk.getValor(), val);
+                    }
+                    break;
+                }              
+                default: break;
+                }
+                break;
+            case CONDICION:
+                eval_condicion(it_pgma, pgma, variables);
+                break;
+            case FUNCION:
+                eval_func(it_pgma, pgma, variables);
+                break;
+            case FOR:
+                eval_for(it_pgma, pgma, variables);
+                break;
+            default: break;
             }
-            else if (tk.getTipo() == IDENTIFICADOR && next(it_pgma)->getValor() == "(") {
-                it_pgma++;
-                llamar_funcion(tk, it_pgma, pgma, variables);
-            }
-            else if (tk.getTipo() == CONDICION) eval_condicion(it_pgma, pgma, variables);
-            else if (tk.getTipo() == FUNCION) eval_func(it_pgma, pgma, variables);
-            else if (tk.getTipo() == FOR) eval_for(it_pgma, pgma, variables);
         }
     }
 

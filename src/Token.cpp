@@ -15,14 +15,12 @@ T token_parser(string const& valor);
 
 template<>
 int token_parser<int>(string const& valor) {
-    if(valor == "verdadero" || valor == "falso") return valor == "verdadero";
+    if(valor == "verdadero" || valor == "falso" || valor == "NADA") return valor == "verdadero";
     return stoi(valor);
 }
 
 template<>
-string token_parser<string>(string const& valor) {
-    return valor;
-}
+string token_parser<string>(string const& valor) { return valor; }
 
 Token::Token(){};
 Token::Token(bool tk, int linea): valor(string(tk ? "verdadero": "falso")), num_linea(linea){}
@@ -59,6 +57,19 @@ int Token::getPrecedencia() { return precedencia; }
 
 template <class T>
 T Token::parse() const{ return token_parser<T>(valor); }
+
+Token& Token::operator++(){
+    int v = atoi(valor.c_str());
+    valor = to_string(v++);
+    return *this;
+}
+
+Token Token::operator++(int){
+    Token temp = *this;
+    temp.tipo = ENTERO;
+    ++*this;
+    return temp;
+}
 
 Token Token::operator ==(Token& tk) {
     if(tk.getTipo() != tipo ) return Token(false, num_linea);
