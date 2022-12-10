@@ -36,7 +36,7 @@ endif
 all: $(MAIN_BIN)
 
 $(MAIN_BIN) : ./main.cpp $(OBJ_S)
-	@echo "\e24[Compilando el binario."
+	@echo "Compilando el binario."
 	$(CXX) $(CXXFLAG) ./main.cpp $(OBJ_S) -o $(MAIN_BIN) 2> logs.txt
 
 $(OBJ_S) : $(SRCS)
