@@ -4,13 +4,13 @@
 
 using namespace std;
 
-Array::Array(vector<Token> arr): lista(arr) {}
-Array::Array(Token tk): Token(tk) {}
-vector<Token> Array::getContenido() { return lista; }
-int Array::length(){ return lista.size(); }
+inline Array::Array(vector<Token> arr): lista(arr) {}
+inline Array::Array(Token tk): Token(tk) {}
+inline vector<Token> Array::getContenido() { return lista; }
+inline int Array::length(){ return lista.size(); }
 
-void Array::addItem(Token tk){ lista.push_back(tk); }
-void Array::delItem(Token tk){ 
+inline void Array::addItem(Token tk){ lista.push_back(tk); }
+inline void Array::delItem(Token tk){ 
     vector<Token> nueva_lista;
     copy_if(lista.begin(), lista.end(), back_inserter(nueva_lista), [&](Token item){
         return !bool(item == tk);
@@ -18,7 +18,7 @@ void Array::delItem(Token tk){
     lista = nueva_lista;
 }
 
-Token Array::operator ==(Array& arr){
+inline Token Array::operator ==(Array& arr){
     if(this->lista.size() != arr.length()) return Token(false, lista[0].getLinea());
     for(int i = 0; i < arr.length(); i++){
         if(!bool(this->lista[i] == arr.lista[i])) return Token(false, lista[0].getLinea());
@@ -26,7 +26,7 @@ Token Array::operator ==(Array& arr){
     return Token(true, lista[0].getLinea());
 }
 
-ostream& operator <<(ostream& os, const Array& arr){
+inline ostream& operator <<(ostream& os, const Array& arr){
     auto lista = arr.lista;
     int size = lista.size();
     

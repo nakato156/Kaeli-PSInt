@@ -20,6 +20,6 @@
 #define WHILE 15
 #define MSG_INIT "Bienvenido."
 
-std::string Operadores = "=(),.+-*/<>[];:!~";
-const char* VERSION_PROGRAM="V1.0";
+inline std::string Operadores = "=(),.+-*/<>[];:!~";
+inline const char* VERSION_PROGRAM="V1.0";
 #endif

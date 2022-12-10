@@ -1,5 +1,7 @@
 /.vscode
+/bin/
 /main
 /main.exe
 /logs.txt
 /files-test
+/logs_obj.txt
