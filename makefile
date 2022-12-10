@@ -35,13 +35,9 @@ ifdef $(IF_DEBUG)
 endif
 all: $(MAIN_BIN)
 
-$(MAIN_BIN) : $(MAIN_OBJ) $(OBJ_S)
+$(MAIN_BIN) : ./main.cpp $(OBJ_S)
 	@echo "\e24[Compilando el binario."
-	$(CXX) $(CXXFLAG) $(MAIN_OBJ) $(OBJ_S) -o $(MAIN_BIN) 2> logs.txt
-
-$(MAIN_OBJ) : ./main.cpp
-	@echo "Compilando archivo objeto $@"
-	$(CXX) $(CXXFLAG) -c -o $@ $< 2>logs_obj.txt
+	$(CXX) $(CXXFLAG) ./main.cpp $(OBJ_S) -o $(MAIN_BIN) 2> logs.txt
 
 $(OBJ_S) : $(SRCS)
 	@echo "compilando archivo objeto $@"
