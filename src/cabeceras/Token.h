@@ -34,7 +34,7 @@ public:
 
     std::string getNombreTipo();
     int getTipo();
-    std::string getValor();
+    std::string& getValor();
     int getLinea();
     int getPrecedencia();
 

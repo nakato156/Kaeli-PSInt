@@ -254,48 +254,44 @@ namespace Evaluadores
 
 
     }
+    
+    void eval_identifier(vector<Token>::iterator &it_pgma, vector<Token> &pgma, Variables &variables) {
+        Token tk = *it_pgma;
 
-    void run(vector<Token> &pgma, Variables &variables){
-        vector<Token>::iterator it_pgma;
-        for(it_pgma = pgma.begin(); it_pgma != pgma.end(); it_pgma++){
-            Token tk = *it_pgma;
-
-            switch (tk.getTipo())
-            {
-            case IDENTIFICADOR:
-                if (next(it_pgma)->getValor() == "(") {
-                    llamar_funcion(tk, ++it_pgma, pgma, variables);
-                    break;
-                }
-
-                switch (next(it_pgma)->getTipo())
-                {
-                case ASIGNACION: {
-                    it_pgma += 2;
-                    Stack stack = eval_expresion(it_pgma, pgma, variables);
-                    auto expr = stack.get_stack();
-                    if(expr.getLinea() != -1) variables.agregar(tk.getValor(), expr);
-                    else {
-                        Valor val = Valor(Array(stack.get_array()));
-                        variables.agregar(tk.getValor(), val);
-                    }
-                    break;
-                }              
-                default: break;
-                }
-                break;
-            case CONDICION:
-                eval_condicion(it_pgma, pgma, variables);
-                break;
-            case FUNCION:
-                eval_func(it_pgma, pgma, variables);
-                break;
-            case FOR:
-                eval_for(it_pgma, pgma, variables);
-                break;
-            default: break;
+        if (next(it_pgma)->getValor() == "(") {
+            llamar_funcion(tk, ++it_pgma, pgma, variables);
+        }
+        else if (next(it_pgma)->getTipo() == ASIGNACION) {
+            it_pgma += 2;
+            Stack stack = eval_expresion(it_pgma, pgma, variables);
+            auto expr = stack.get_stack();
+            if(expr.getLinea() != -1) variables.agregar(tk.getValor(), expr);
+            else {
+                Valor val = Valor(Array(stack.get_array()));
+                variables.agregar(tk.getValor(), val);
             }
         }
+    }
+
+    void run(vector<Token> &pgma, Variables &variables){
+        using TokenHandler = std::function<void(vector<Token>::iterator&, vector<Token>&, Variables&)>;
+        static const std::unordered_map<int, TokenHandler> tokenHandlers = {
+            {IDENTIFICADOR, &eval_identifier},
+            {CONDICION, &eval_condicion},
+            {FUNCION, &eval_func},
+            {FOR, &eval_for},
+        };
+
+        vector<Token>::iterator iter = pgma.begin();
+        
+        for(; iter != pgma.end(); iter++){
+            Token tk = *iter;
+            auto it = tokenHandlers.find(tk.getTipo());
+            if(it != tokenHandlers.end()){
+                auto handler = it->second;
+                handler(iter, pgma, variables);
+            }
+        };
     }
 
 } 

@@ -51,7 +51,7 @@ Token::Token(string tk, int linea){
 }
 string Token::getNombreTipo(){ return nombreTipo[tipo]; }
 int Token::getTipo() { return tipo; }
-string Token::getValor() { return valor; }
+string& Token::getValor() { return valor; }
 int Token::getLinea() { return num_linea; }
 int Token::getPrecedencia() { return precedencia; }
 
