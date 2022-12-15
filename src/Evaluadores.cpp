@@ -285,7 +285,7 @@ namespace Evaluadores
 
         vector<Token>::iterator iter = pgma.begin(), iter_end = pgma.end();
         
-        for(; iter != pgma.end(); iter++){
+        for(; iter != iter_end; iter++){
             auto it = tokenHandlers.find(iter->getTipo());
             if(it != tokenHandlers.end()){
                 auto handler = it->second;
