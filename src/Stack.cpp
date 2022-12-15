@@ -7,10 +7,10 @@ using namespace std;
 using namespace Exceptions;
 
 Stack::Stack() = default;
-Stack::Stack(vector<Token> &tokens_): tokens(tokens_) { }
-void Stack::add_valores(Token tk){ valores.push_back(tk); }
-void Stack::add_operadores(Token tk){ operadores.push_back(tk); }
-Token Stack::operar(Token val1, string op, Token val2){
+Stack::Stack(vector<Token> ::iterator &fin_it_): fin_it(fin_it_) { }
+void Stack::add_valores(Token &tk){ valores.push_back(tk); }
+void Stack::add_operadores(Token &tk){ operadores.push_back(tk); }
+Token Stack::operar(Token &val1, string op, Token val2){
     if(operaciones_aritmeticas.find(op) != operaciones_aritmeticas.end()) return operaciones_aritmeticas[op](val1, val2);
     else if(operaciones_igualdad.find(op) != operaciones_igualdad.end()) return operaciones_igualdad[op](val1, val2);
     throw TokenError(val2.getLinea());
@@ -24,12 +24,8 @@ void Stack::agregar(Valor val, vector<Token>::iterator &it){
     }
     Array arr = val;
     Token tk = *next(it);
-    if(tk.getValor() == "=" && (it + 1)->getValor() == "="){
-        return;
-    }
-    else if(tk.getTipo() == END) { 
-        array_tks = arr.getContenido();
-    }
+    if(tk.getValor() == "=" && (it + 1)->getValor() == "=") return;
+    else if(tk.getTipo() == END) array_tks = arr.getContenido();
     else throw TypeError("array", it->getNombreTipo(), it->getLinea());
 }
 
@@ -59,7 +55,7 @@ void Stack::agregar(Token tk, vector<Token>::iterator &it){
                     operadores.push_back(tk);
                     valores.push_back(*(++it));
                 }else {
-                    if(it+1 == tokens.end()) exit(EXIT_FAILURE);
+                    if(it+1 == fin_it) exit(EXIT_FAILURE);
                     it++;
                     val1 = valores.back(); valores.pop_back();
                     val2 = *it;

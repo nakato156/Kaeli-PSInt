@@ -10,30 +10,12 @@ using namespace Exceptions;
 namespace Evaluadores
 {    
     void run(vector<Token>&, Variables&);
-    Stack eval_expresion(vector<Token>::iterator&, vector<Token>&, Variables&, bool);
-        
-    Token call_new_funcion(Funcion &func, void(*runner)(vector<Token>&, Variables&), Variables &args){
-        vector<Token> contenido = func.getContenido(), returned = func.getSentReturn();
-        runner(contenido, args);
-        vector<Token>::iterator it = returned.begin();
-        if (returned.size() > 0 ) {
-            Stack stack = eval_expresion(it, returned, args, false);
-            auto token = stack.get_stack();
-            if(token.getLinea() != -1) return token;
-        }
-        return Token("NADA", contenido.back().getLinea());
-    };
+    Stack eval_expresion(vector<Token>::iterator&, vector<Token>::iterator&, Variables&, bool);
 
-    Token call_native_func(Token &token_func, vector<Valor> &args, Variables &vars){
-        string name_func = token_func.getValor();
-        int linea = token_func.getLinea();
-        return Funciones_Nativas::call(name_func, args, linea);
-    }
-
-    vector<Valor> procesar_simple_args(vector<Token>::iterator &it, vector<Token> &tokens, Variables &vars){
+    vector<Valor> procesar_simple_args(vector<Token>::iterator &it, vector<Token>::iterator &fin_it, Variables &vars){
         vector<Valor> args;
         int fin = 1, i = 0;
-        for(; it != tokens.end(); it++){
+        for(; it != fin_it; it++){
             if(it->getValor() == ")" && fin - 1 == 0) break;
             else if(it->getValor() == "(") fin++;
             else if(it->getValor() == ")") fin--;
@@ -45,10 +27,10 @@ namespace Evaluadores
         return args;
     }
 
-    map<string, Valor> procesar_kwargs(vector<Token>::iterator &it, vector<Token> &tokens, vector<Token> &argsFunc){
+    map<string, Valor> procesar_kwargs(vector<Token>::iterator &it, vector<Token>::iterator &fin_it, vector<Token> &argsFunc){
         map<string, Valor> args;
         int fin = 1, i = 0;
-        for(; it != tokens.end(); it++){
+        for(; it != fin_it; it++){
             if(it->getValor() == ")" && fin - 1 == 0) break;
             else if(it->getValor() == "(") fin++;
             else if(it->getValor() == ")") fin--;
@@ -76,28 +58,14 @@ namespace Evaluadores
         return args;
     }
 
-    Token llamar_funcion(Token token_func, vector<Token>::iterator &it, vector<Token> &tokens, Variables &vars){
-        Funcion func = vars.getFunc(token_func.getValor());
-        
-        if(!func.getNombre().empty()) {
-            vector<Token> funcArgs = func.getArgs();
-            map<string, Valor> args = procesar_kwargs(++it, tokens, funcArgs);
-            Variables scope_vars = args;
-            return call_new_funcion(func, run, scope_vars);
-        }
-
-        vector<Valor> args = procesar_simple_args(++it, tokens, vars);
-        return call_native_func(token_func, args, vars);
-    }
-
-    void eval_func(vector<Token>::iterator &it, vector<Token> &tokens, Variables &vars){
+    void eval_func(vector<Token>::iterator &it, vector<Token>::iterator &fin_it, Variables &vars){
         Token nombre_fun = *(++it);
         vector<Token> contenido, returned, args;
 
         if((++it)->getValor() != "(") throw TokenError(*it);
         it++;
         bool add_args = true;
-        for(; it != tokens.end(); it++){
+        for(; it != fin_it; it++){
             if(it->getValor() == ")") {
                 add_args = false;
                 if(next(it)->getValor() != ":" && next(it, 2)->getTipo() != START_BLOCK && next(it, 3)->getTipo() != END) throw TokenError(it->getLinea());
@@ -106,7 +74,7 @@ namespace Evaluadores
             if(it->getValor() == ",") continue;
             else if(add_args) args.push_back(*it);
             else if(it->getValor() == "retornar"){
-                for(; it != tokens.end(); it++){
+                for(; it != fin_it; it++){
                     if(it->getTipo() == END_BLOCK) break;
                     returned.push_back(*it);
                 }
@@ -121,11 +89,43 @@ namespace Evaluadores
         vars.agregar(nombre_fun.getValor(), func);
     }
 
-    Array eval_arreglo(vector<Token>::iterator &it, vector<Token> &tokens, Variables &vars){
+    Token call_new_funcion(Funcion &func, void(*runner)(vector<Token>&, Variables&), Variables &args){
+        vector<Token> contenido = func.getContenido(), returned = func.getSentReturn();
+        runner(contenido, args);
+        vector<Token>::iterator it = returned.begin(), fin_it = returned.end();
+        if (returned.size() > 0 ) {
+            Stack stack = eval_expresion(it, fin_it, args, false);
+            auto token = stack.get_stack();
+            if(token.getLinea() != -1) return token;
+        }
+        return Token("NADA", contenido.back().getLinea());
+    };
+
+    Token call_native_func(Token &token_func, vector<Valor> &args, Variables &vars){
+        string name_func = token_func.getValor();
+        int linea = token_func.getLinea();
+        return Funciones_Nativas::call(name_func, args, linea);
+    }
+
+    Token llamar_funcion(Token token_func, vector<Token>::iterator &it, vector<Token>::iterator &fin_it, Variables &vars){
+        Funcion func = vars.getFunc(token_func.getValor());
+        
+        if(!func.getNombre().empty()) {
+            vector<Token> funcArgs = func.getArgs();
+            map<string, Valor> args = procesar_kwargs(++it, fin_it, funcArgs);
+            Variables scope_vars = args;
+            return call_new_funcion(func, run, scope_vars);
+        }
+
+        vector<Valor> args = procesar_simple_args(++it, fin_it, vars);
+        return call_native_func(token_func, args, vars);
+    }
+
+    Array eval_arreglo(vector<Token>::iterator &it, vector<Token>::iterator &end, Variables &vars){
         Token token;
         int i = 0;
         auto arreglo = Array();
-        for(; it != tokens.end(); it++){
+        for(; it != end; it++){
             token = *it;
             if(token.getValor() == ",") continue;
             if(token.getValor() == "[") {
@@ -145,20 +145,21 @@ namespace Evaluadores
         return arreglo;
     }
 
-    Stack eval_expresion(vector<Token>::iterator &it, vector<Token> &tokens, Variables &vars, bool block = false){
+    Stack eval_expresion(vector<Token>::iterator &it, vector<Token>::iterator &fin_it, Variables &vars, bool block = false){
         Token token;
-        Stack myStack = Stack(tokens);
-        for(; it != tokens.end(); it++){
+        Stack myStack = Stack(fin_it);
+
+        for(; it != fin_it; it++){
             token = *it;
             if(block && token.getValor() == ":") break;
             if(token.getTipo() == END) break;
             if(token.getTipo() == IDENTIFICADOR && next(it)->getValor() == "("){
                 it++;
-                token = llamar_funcion(token, it, tokens, vars);
+                token = llamar_funcion(token, it, fin_it, vars);
             }
             else if(token.getTipo() == IDENTIFICADOR) token = vars[token.getValor()];
             else if(token.getValor() == "[") {
-                auto arr = eval_arreglo(it, tokens, vars);
+                auto arr = eval_arreglo(it, fin_it, vars);
                 myStack.agregar(Valor(arr), it);
                 continue;
             }
@@ -168,10 +169,10 @@ namespace Evaluadores
         else if (!block && it->getTipo() != END)throw EOLError(it->getLinea()); 
         return myStack;
     }
-
-    void eval_condicion(vector<Token>::iterator &it, vector<Token> &tokens, Variables &vars){
+    
+    void eval_condicion(vector<Token>::iterator &it, vector<Token>::iterator &fin_it, Variables &vars){
         it++;
-        Stack stack = eval_expresion(it, tokens, vars, true);
+        Stack stack = eval_expresion(it, fin_it, vars, true);
         Valor expr = stack.get_stack();
         
         it++;
@@ -182,7 +183,7 @@ namespace Evaluadores
 
         vector<Token> tmp_tokens;
         int cont_start = 1;
-        for(; it != tokens.end(); it++){
+        for(; it != fin_it; it++){
             if(it->getTipo() == END_BLOCK && !(cont_start - 1)) break;
             else if(it->getTipo() == START_BLOCK) cont_start++;
             else if(it->getTipo() == END_BLOCK) cont_start--;
@@ -192,10 +193,10 @@ namespace Evaluadores
         if(expr) run(tmp_tokens, vars);
     }
 
-    vector<Token> procesar_bloque(vector<Token>::iterator &it, vector<Token> &tokens){
+    vector<Token> procesar_bloque(vector<Token>::iterator &it, vector<Token>::iterator &fin){
         vector<Token> bloque;
         int cont_start = 1;
-        for(; it != tokens.end(); it++){
+        for(; it != fin; it++){
             if(it->getTipo() == END_BLOCK && !(cont_start - 1)) {
                 it++;
                 break;
@@ -206,7 +207,7 @@ namespace Evaluadores
         return bloque;
     }
 
-    void eval_for(vector<Token>::iterator &it, vector<Token> &tokens, Variables &vars){
+    void eval_for(vector<Token>::iterator &it, vector<Token>::iterator &fin_it, Variables &vars){
         Token var_control = *(++it);
         int linea_var_control = var_control.getLinea();
         vector<Token> contenido_for;
@@ -222,7 +223,7 @@ namespace Evaluadores
             fin = it->getTipo() == IDENTIFICADOR ? vars[it->getValor()].parse<int>() : it->parse<int>();
             it+=2;
 
-            contenido_for = procesar_bloque(it, tokens);
+            contenido_for = procesar_bloque(it, fin_it);
             
             if(contenido_for.empty()) return;
             for(; inicio < fin; inicio++){
@@ -234,8 +235,9 @@ namespace Evaluadores
             Token iterable_ = *(++it);
             vector<Token> iterable;
 
-            if(iterable_.getValor() == "[") 
-                iterable = eval_arreglo(it, tokens, vars).getContenido();
+            if(iterable_.getValor() == "["){
+                iterable = eval_arreglo(it, fin_it, vars).getContenido();
+            } 
             else if(iterable_.getTipo() == STRING){
                 string valor = iterable_.getValor();
                 for(char c: valor) 
@@ -243,7 +245,7 @@ namespace Evaluadores
             }
             
             it += 2;
-            contenido_for = procesar_bloque(it, tokens);
+            contenido_for = procesar_bloque(it, fin_it);
             
             if(contenido_for.empty()) return;
             for(auto elemento: iterable){
@@ -255,26 +257,25 @@ namespace Evaluadores
 
     }
     
-    void eval_identifier(vector<Token>::iterator &it_pgma, vector<Token> &pgma, Variables &variables) {
+    void eval_identifier(vector<Token>::iterator &it_pgma, vector<Token>::iterator &fin_it, Variables &variables) {
         Token tk = *it_pgma;
 
-        if (next(it_pgma)->getValor() == "(") {
-            llamar_funcion(tk, ++it_pgma, pgma, variables);
-        }
+        if (next(it_pgma)->getValor() == "(")
+            llamar_funcion(tk, ++it_pgma, fin_it, variables);
         else if (next(it_pgma)->getTipo() == ASIGNACION) {
             it_pgma += 2;
-            Stack stack = eval_expresion(it_pgma, pgma, variables);
+            Stack stack = eval_expresion(it_pgma, fin_it, variables);
             auto expr = stack.get_stack();
             if(expr.getLinea() != -1) variables.agregar(tk.getValor(), expr);
             else {
-                Valor val = Valor(Array(stack.get_array()));
+                Valor val = Array(stack.get_array());
                 variables.agregar(tk.getValor(), val);
             }
         }
     }
 
     void run(vector<Token> &pgma, Variables &variables){
-        using TokenHandler = std::function<void(vector<Token>::iterator&, vector<Token>&, Variables&)>;
+        using TokenHandler = std::function<void(vector<Token>::iterator&, vector<Token>::iterator&, Variables&)>;
         static const std::unordered_map<int, TokenHandler> tokenHandlers = {
             {IDENTIFICADOR, &eval_identifier},
             {CONDICION, &eval_condicion},
@@ -282,14 +283,13 @@ namespace Evaluadores
             {FOR, &eval_for},
         };
 
-        vector<Token>::iterator iter = pgma.begin();
+        vector<Token>::iterator iter = pgma.begin(), iter_end = pgma.end();
         
         for(; iter != pgma.end(); iter++){
-            Token tk = *iter;
-            auto it = tokenHandlers.find(tk.getTipo());
+            auto it = tokenHandlers.find(iter->getTipo());
             if(it != tokenHandlers.end()){
                 auto handler = it->second;
-                handler(iter, pgma, variables);
+                handler(iter, iter_end, variables);
             }
         };
     }
