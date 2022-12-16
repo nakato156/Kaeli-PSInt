@@ -1,5 +1,7 @@
-/.vscode
-/main
-/main.exe
-/logs.txt
-/files-test
+.vs/
+.vscode/
+main/
+files-test/
+build/
+main.exe
+logs.txt
