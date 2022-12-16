@@ -60,7 +60,7 @@ T Token::parse() const{ return token_parser<T>(valor); }
 
 Token& Token::operator++(){
     int v = atoi(valor.c_str());
-    valor = to_string(v++);
+    valor = to_string(++v);
     return *this;
 }
 

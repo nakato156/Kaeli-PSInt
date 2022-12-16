@@ -124,7 +124,7 @@ namespace Evaluadores
     Array eval_arreglo(vector<Token>::iterator &it, vector<Token>::iterator &end, Variables &vars){
         Token token;
         int i = 0;
-        auto arreglo = Array();
+        vector<Token> arreglo;
         for(; it != end; it++){
             token = *it;
             if(token.getValor() == ",") continue;
@@ -139,7 +139,7 @@ namespace Evaluadores
                 continue;
             }
             if(token.getTipo() == IDENTIFICADOR) token = vars[token.getValor()];
-            arreglo.addItem(token);
+            arreglo.push_back(token);
         }
         if(i != 0) throw EOLError(token);
         return arreglo;
@@ -260,10 +260,13 @@ namespace Evaluadores
     void eval_identifier(vector<Token>::iterator &it_pgma, vector<Token>::iterator &fin_it, Variables &variables) {
         Token tk = *it_pgma;
 
-        if (next(it_pgma)->getValor() == "(")
-            llamar_funcion(tk, ++it_pgma, fin_it, variables);
-        else if (next(it_pgma)->getTipo() == ASIGNACION) {
+        if (next(it_pgma)->getTipo() == ASIGNACION) {
             it_pgma += 2;
+            if((it_pgma + 1)->getTipo() == END ){
+                variables.agregar(tk.getValor(), *it_pgma);
+                it_pgma++;
+                return;
+            }
             Stack stack = eval_expresion(it_pgma, fin_it, variables);
             auto expr = stack.get_stack();
             if(expr.getLinea() != -1) variables.agregar(tk.getValor(), expr);
@@ -272,6 +275,8 @@ namespace Evaluadores
                 variables.agregar(tk.getValor(), val);
             }
         }
+        else if (next(it_pgma)->getValor() == "(")
+            llamar_funcion(tk, ++it_pgma, fin_it, variables);
     }
 
     void run(vector<Token> &pgma, Variables &variables){
