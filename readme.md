@@ -3,9 +3,25 @@
 Kaeli-PSInt Es un nuevo intérprete con nueva sintaxis en español y basado en python, creando así este nuevo pseudo-lenguaje.<br>
 
 Está destinado para los estudiantes, para que se familiaricen en el mundo de la programación, y puedan crear sus propias lógicas.
+
 ## ¿Como compilarlo?
 
+Con CMake 3.13 en adelante:
+
+Crea la carpeta donde quieres compilar el proyecto.
+
+Construye el proyecto con:
+```
+cmake -B ruta/al/proyecto/compilado
+```
+
+Compilalo con:
+```
+cmake --build ruta/al/proyecto/compilado
+```
+
 Si tienes gcc(mingw en windows) y también la herramienta make puedes aprovechar y usar de una nuestro makefile y hacer la compilación sin muchos problemas, sino puedes usar tu compilador que más te guste.<br/>
+
 Para descargar gcc y make:
 - En linux solo debemos instalar "build-essential" que contiene ambos paquete:
 ```
