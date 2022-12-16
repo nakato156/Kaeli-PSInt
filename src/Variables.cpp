@@ -1,41 +1,37 @@
-#include "map"
-#include "Valor.cpp"
-#include "Funcion.cpp"
-#include "./cabeceras/Exceptions.h"
+#include "Variables.h"
+
+#include "Exceptions.h"
 
 using Exceptions::NameError;
+using namespace std;
 
-class Variables {
-private:
-    map<string, Valor> variables;
-    unordered_map<string, Funcion> funciones;
-public:
-    Variables() = default;
-    Variables(map<string, Valor> &vars): variables(vars) {}
-    int size(){ return variables.size(); }
-    
-    void agregar(const string &nombre, Valor &arr){ variables[nombre] = arr; }
-    void agregar(const string &nombre, Token &token) { variables[nombre] = Valor(token); }
-    void agregar(const string &nombre, Funcion &func) { funciones[nombre] = func; }
-    
-    void eliminar(const string &nombre){
-        if(variables.find(nombre) != variables.end()) variables.erase(nombre);
-    }
+Variables::Variables(map<string, Valor> &vars) : variables(vars) {}
 
-    Funcion& getFunc(const string &nombre){ return funciones[nombre]; };
+int Variables::size() { return variables.size(); }
 
-    Valor& operator [](const string &nombre) { 
-        if(variables.find(nombre) != variables.end()) return variables[nombre];
-        throw NameError(nombre);
-    }
+void Variables::agregar(const string &nombre, Valor &arr) { variables[nombre] = arr; }
+void Variables::agregar(const string &nombre, Token &token) { variables[nombre] = Valor(token); }
+void Variables::agregar(const string &nombre, Funcion &func) { funciones[nombre] = func; }
 
-    friend ostream& operator <<(ostream &os, const Variables &vars){
-        os << "{" << endl;
-        for(auto &item: vars.variables) 
-            os << "\t" << item.first << ": " << item.second << "," << endl;
-        for(auto &item: vars.funciones) 
-            os << "\t" << item.first << ": " << item.second << "," << endl;
-        os << "}" << endl;
-        return os;
-    }
-};
+void Variables::eliminar(const string &nombre) {
+    if (variables.find(nombre) != variables.end())
+        variables.erase(nombre);
+}
+
+Funcion& Variables::getFunc(const string &nombre) { return funciones[nombre]; };
+
+Valor& Variables::operator[](const string &nombre) {
+    if (variables.find(nombre) != variables.end())
+        return variables[nombre];
+    throw NameError(nombre);
+}
+
+ostream& operator<<(ostream &os, const Variables &vars) {
+    os << "{" << endl;
+    for (auto &item : vars.variables)
+        os << "\t" << item.first << ": " << item.second << "," << endl;
+    for (auto &item : vars.funciones)
+        os << "\t" << item.first << ": " << item.second << "," << endl;
+    os << "}" << endl;
+    return os;
+}

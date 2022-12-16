@@ -1,10 +1,10 @@
-#include "cabeceras/Nativo.h"
+#include "Nativo.h"
 
 using namespace std;
 
-Token Nativo::imprimir(vector<Valor> args, string end = "\n", string sep = " "){
+Token Nativo::imprimir(vector<Valor> args, string end = "\n", string sep = " ") {
     Valor tk;
-    for(Valor i: args) {
+    for (Valor i : args) {
         cout << i << sep;
         tk = i;
     }

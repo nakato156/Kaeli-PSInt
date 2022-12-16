@@ -1,6 +1,7 @@
 #ifndef VALOR
 #define VALOR
-#include "../Array.cpp"
+
+#include "Array.h"
 
 class Valor: public Array {
 private:

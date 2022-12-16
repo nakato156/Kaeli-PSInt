@@ -1,7 +1,7 @@
-#ifndef Array_h
-#define Array_h
-#include "Token.h"
+#pragma once
+
 #include <vector>
+#include "Token.h"
 
 class Array : public Token {
 protected:
@@ -20,4 +20,3 @@ public:
     Token operator ==(Array& arr);
     friend std::ostream& operator <<(std::ostream& os, const Array& arr);
 };
-#endif

@@ -1,5 +1,5 @@
-#ifndef definiciones
-#define definiciones
+#pragma once
+
 #include <string>
 
 #define END 0
@@ -20,6 +20,5 @@
 #define WHILE 15
 #define MSG_INIT "Bienvenido."
 
-std::string Operadores = "=(),.+-*/<>[];:!~";
-const char* VERSION_PROGRAM="V1.0";
-#endif
+extern std::string Operadores;
+#define VERSION_PROGRAM "V1.0"

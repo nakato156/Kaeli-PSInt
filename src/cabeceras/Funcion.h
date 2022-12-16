@@ -1,7 +1,9 @@
-#ifndef FUNCION_h
-#define FUNCION_h
-#include "Token.h"
+#pragma once
+
 #include <vector>
+#include <string>
+
+#include "Token.h"
 
 class Funcion {
 private:
@@ -16,4 +18,3 @@ public:
     std::vector<Token> getArgs();
     friend std::ostream& operator <<(std::ostream& os, const Funcion& func);
 };
-#endif
