@@ -1,39 +1,43 @@
-#include <iostream>
 #include <algorithm>
-#include "./cabeceras/Array.h"
+#include <iostream>
+
+#include "Array.h"
 
 using namespace std;
 
-Array::Array(vector<Token> arr): lista(arr) {}
-Array::Array(Token tk): Token(tk) {}
+Array::Array(vector<Token> arr) : lista(arr) {}
+Array::Array(Token tk) : Token(tk) {}
 vector<Token> Array::getContenido() { return lista; }
-int Array::length(){ return lista.size(); }
+int Array::length() { return lista.size(); }
 
-void Array::addItem(Token tk){ lista.push_back(tk); }
-void Array::delItem(Token tk){ 
+void Array::addItem(Token tk) { lista.push_back(tk); }
+void Array::delItem(Token tk) {
     vector<Token> nueva_lista;
-    copy_if(lista.begin(), lista.end(), back_inserter(nueva_lista), [&](Token item){
+    copy_if(lista.begin(), lista.end(), back_inserter(nueva_lista), [&](Token item) {
         return !bool(item == tk);
     });
     lista = nueva_lista;
 }
 
-Token Array::operator ==(Array& arr){
-    if(this->lista.size() != arr.length()) return Token(false, lista[0].getLinea());
-    for(int i = 0; i < arr.length(); i++){
-        if(!bool(this->lista[i] == arr.lista[i])) return Token(false, lista[0].getLinea());
+Token Array::operator==(Array &arr) {
+    if (this->lista.size() != arr.length())
+        return Token(false, lista[0].getLinea());
+    for (int i = 0; i < arr.length(); i++) {
+        if (!bool(this->lista[i] == arr.lista[i]))
+            return Token(false, lista[0].getLinea());
     }
     return Token(true, lista[0].getLinea());
 }
 
-ostream& operator <<(ostream& os, const Array& arr){
+ostream &operator<<(ostream &os, const Array &arr) {
     auto lista = arr.lista;
     int size = lista.size();
-    
+
     os << "[ ";
-    for(int i = 0; i < size; i++){
-        os << lista[i]; 
-        if(i + 1 != size) os << ", ";
+    for (int i = 0; i < size; i++) {
+        os << lista[i];
+        if (i + 1 != size)
+            os << ", ";
     }
     os << " ]";
     return os;

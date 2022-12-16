@@ -1,9 +1,11 @@
-#ifndef TOKENIZER_h
-#define TOKENIZER_h
-#include "definiciones.h"
+#pragma once
+
 #include <iostream>
 #include <vector>
-#include "../Token.cpp"
+#include <string>
+
+#include "definiciones.h"
+#include "Token.h"
 
 class Tokenizer {
 private:
@@ -18,4 +20,3 @@ public:
     std::vector<Token> getTokens();
     Token operator [](int index);
 };
-#endif

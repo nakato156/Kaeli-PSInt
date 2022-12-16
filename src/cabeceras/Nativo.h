@@ -1,11 +1,13 @@
-#ifndef NATIVO_h
-#define NATIVO_h
-#include "Valor.h"
+#pragma once
+
+#include <string>
 #include <vector>
+
+#include "Token.h"
+#include "Valor.h"
 
 namespace Nativo
 {
-    Token imprimir(std::vector<Valor>, std::string, std::string);
+    Token imprimir(std::vector<Valor> args, std::string end, std::string sep);
     //Token leer(std::vector<Token>);
-} 
-#endif
+}

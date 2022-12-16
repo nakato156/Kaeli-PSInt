@@ -1,9 +1,10 @@
-#ifndef TOKEN
-#define TOKEN
-#include "definiciones.h"
+#pragma once
+
 #include <iostream>
 #include <string>
 #include <map>
+
+#include "definiciones.h"
 
 class Token
 {
@@ -55,4 +56,3 @@ public:
 
     friend std::ostream& operator <<(std::ostream& os, const Token& tk);
 };
-#endif
