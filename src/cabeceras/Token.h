@@ -6,6 +6,15 @@
 
 #include "definiciones.h"
 
+template <class T>
+T token_parser(std::string const &valor);
+
+template <>
+int token_parser<int>(std::string const &valor);
+
+template <>
+std::string token_parser<std::string>(std::string const &valor);
+
 class Token
 {
 protected:

@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <string>
+#include <algorithm>
+#include <chrono>
 
 #include "Evaluadores.h"
 #include "Exceptions.h"
@@ -61,6 +63,7 @@ int interprete() {
             exit(EXIT_FAILURE);
         }
     }
+    return 0;
 }
 
 int abrirArchivo(int argc, char *argv[]){
@@ -73,15 +76,15 @@ int abrirArchivo(int argc, char *argv[]){
 
     for (int i = 1; i < argc; i++) {
         string opcion = argv[i];
-        if (opcion.find('-') == string::npos) {
-            path_files.push_back(opcion.c_str());
+        if (opcion.length() > 0 && opcion[0] != '-') {
+            path_files.push_back(opcion);
             continue;
         }
         params.push_back(opcion.substr(1));
     }
 
     if (!path_files.empty()) {
-        ifstream file(path_files[0].c_str());
+        ifstream file(path_files[0]);
         if (!file.good()) {
             printf("El archivo no existe, revise la ruta.");
             return EXIT_FAILURE;
@@ -110,6 +113,7 @@ int abrirArchivo(int argc, char *argv[]){
             return EXIT_FAILURE;
         }
     }
+    return 0;
 }
 
 int main(int argc, char *argv[]) {

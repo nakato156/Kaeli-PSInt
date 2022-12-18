@@ -1,45 +1,48 @@
 # Kaeli-PSInt
 
-Kaeli-PSInt Es un nuevo intérprete con nueva sintaxis en español y basado en python, creando así este nuevo pseudo-lenguaje.<br>
+Kaeli-PSInt Es un nuevo intérprete con nueva sintaxis en español y basado en python, creando así este nuevo pseudo-lenguaje.
 
-Está destinado para los estudiantes, para que se familiaricen en el mundo de la programación, y puedan crear sus propias lógicas.
+Está destinado a estudiantes, para que se familiaricen con el mundo de la programación y puedan crear sus propias lógicas.
 
-## ¿Como compilarlo?
+## Compilación
 
-Con CMake 3.13 en adelante:
+Con CMake 3.13 o más reciente:
 
-Crea la carpeta donde quieres compilar el proyecto.
+- Ejecuta el archivo `build.bat` en Windows o `build.sh` en Linux y el proyecto se compilará en la carpeta `build`.
+
+- O crea la carpeta donde quieras compilar el proyecto y ejecuta los siguientes comandos.
 
 Construye el proyecto con:
 ```
-cmake -B ruta/al/proyecto/compilado
+cmake -S ruta/a/la/fuente -B ruta/al/proyecto/compilado
 ```
 
 Compilalo con:
 ```
-cmake --build ruta/al/proyecto/compilado
+cmake -S ruta/a/la/fuente --build ruta/al/proyecto/compilado --config Release
 ```
 
-Si tienes gcc(mingw en windows) y también la herramienta make puedes aprovechar y usar de una nuestro makefile y hacer la compilación sin muchos problemas, sino puedes usar tu compilador que más te guste.<br/>
+### Manualmente
+
+Si tienes gcc (mingw en Windows) y también la herramienta make puedes aprovechar y usar nuestro makefile y hacer la compilación sin muchos problemas, sino puedes usar tu compilador que más te guste.<br/>
 
 Para descargar gcc y make:
 - En linux solo debemos instalar "build-essential" que contiene ambos paquete:
-```
-sudo apt install build-essential -y
-```
-Y después hacer:
+    ```
+    sudo apt install build-essential -y
+    ```
+    Y después hacer:
 
-```
-make
-```
-- En windows solo debemos instalar "msys2" que contiene ambos paquete:
-msys2: Lo puedes descargar he instalar desde la [página oficial](https://www.mingw-w64.org/downloads/#msys2).<br/>
+    ```
+    make
+    ```
+- En Windows solo debemos instalar "msys2" que contiene ambos paquetes: Lo puedes descargar he instalar desde la [página oficial](https://www.mingw-w64.org/downloads/#msys2).<br/>
 
-Y después hacer:
-```
-mingw32-make
-```
-Si no te funciona, prueba poner en la variable de entorno con la dirección de la carpeta de mingw32.
+    Y después hacer:
+    ```
+    mingw32-make
+    ```
+    Si no te funciona, prueba poner en la variable de entorno con la dirección de la carpeta de mingw32.
 ## Sintaxis:
 
 Para asignar una variable elegimos la forma de python:
@@ -68,52 +71,52 @@ Nota: `START;` indica el inicio y `END;` el final del bloque.
 
 También existe el típico ciclo `for`, que tiene 2 variantes
 
-* iterar en un rango
+- iterar en un rango
 
-Esta variante tiene como sintaxis:
+    Esta variante tiene como sintaxis:
 
-```
-iterar variable_control desde inicio hasta fin:
-    // codigo
-END;
-```
-Un ejemplo:
-```
-iterar x desde 1 hasta 10:
-    imprimir(x);
-END;
-```
+    ```
+    iterar variable_control desde inicio hasta fin:
+        // codigo
+    END;
+    ```
+    Un ejemplo:
+    ```
+    iterar x desde 1 hasta 10:
+        imprimir(x);
+    END;
+    ```
 
-* iterar en un iterable
+- iterar en un iterable
 
-Existen 2 tipos de iterables, los `strings` y `arrays`.
+    Existen 2 tipos de iterables, los `strings` y `arrays`.
 
-La sintaxis de esta variante sería:
+    La sintaxis de esta variante sería:
 
-```
-iterar variable_control en iterable:
-    //codigo
-END;
-```
-Un ejemplo:
-```
-iterar x en [1, 2 , "holas", verdadero]:
-    imprimir(x);
-END;
-```
+    ```
+    iterar variable_control en iterable:
+        //codigo
+    END;
+    ```
+    Un ejemplo:
+    ```
+    iterar x en [1, 2 , "holas", verdadero]:
+        imprimir(x);
+    END;
+    ```
 
 ## Uso
 El programa posee un modo interactivo, este aparece cuando se ejecuta el intérprete sin ningún argumento. Si se desea ejecutar un archivo se llama al intértprete y como primer argumento va la ubicación del archivo con extensión `ae`. Aquí un ejemplo.
 
-* REM CMD Windows:
-```
-Kaeli-PSInt.exe url_of_file.ae
-```
+* Windows:
+    ```
+    Kaeli-PSInt.exe url_of_file.ae
+    ```
 
 * Linux
-```
-./Kaeli-PSInt url_of_file.ae
-```
+    ```
+    ./Kaeli-PSInt url_of_file.ae
+    ```
 
 ## Futuras actualizaciones:
 * Se quiere agregar color a los errores y un poco al intérprete, por lo que se utilizara la biblioteca ncurses para ello.

@@ -11,9 +11,6 @@ using namespace std;
 using namespace Helpers;
 using namespace Exceptions;
 
-template <class T>
-T token_parser(string const &valor);
-
 template <>
 int token_parser<int>(string const &valor) {
     if (valor == "verdadero" || valor == "falso" || valor == "NADA")
@@ -73,8 +70,8 @@ template <class T>
 T Token::parse() const { return token_parser<T>(valor); }
 
 Token &Token::operator++() {
-    int v = atoi(valor.c_str());
-    valor = to_string(++v);
+    int v = stoi(valor);
+    valor = to_string(v++);
     return *this;
 }
 
