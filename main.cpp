@@ -120,11 +120,6 @@ int main(int argc, char *argv[]) {
     
     int result = abrirArchivo(argc, argv);
     if (result != -1) {
-        if (Helpers::consolaPropia()){
-            cin.get();
-            cout << "Presiona una tecla para salir.\n";
-            cout.flush();
-        }
         return result;
     }
 

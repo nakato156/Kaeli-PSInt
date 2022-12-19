@@ -71,7 +71,7 @@ T Token::parse() const { return token_parser<T>(valor); }
 
 Token &Token::operator++() {
     int v = stoi(valor);
-    valor = to_string(v++);
+    valor = to_string(++v);
     return *this;
 }
 
