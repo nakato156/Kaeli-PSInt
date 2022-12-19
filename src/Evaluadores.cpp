@@ -125,7 +125,7 @@ namespace Evaluadores {
         return Token("NADA", contenido.back().getLinea());
     };
 
-    Token call_native_func(Token &token_func, vector<Valor> &args, Variables &vars) {
+    Token call_native_func(Token &token_func, vector<Valor> &args) {
         string name_func = token_func.getValor();
         int linea = token_func.getLinea();
         return Funciones_Nativas::call(name_func, args, linea);
@@ -142,7 +142,7 @@ namespace Evaluadores {
         }
 
         vector<Valor> args = procesar_simple_args(++it, fin_it, vars);
-        return call_native_func(token_func, args, vars);
+        return call_native_func(token_func, args);
     }
 
     Array eval_arreglo(vector<Token>::iterator &it, vector<Token>::iterator &end, Variables &vars) {
