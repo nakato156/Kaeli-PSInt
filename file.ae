@@ -9,7 +9,8 @@ si uno*2+2*2 == 6: START;
 END;
 
 funcion holas(arg1): START;
-    holas = arg1;
+    hola = arg1;
+    imprimir(hola);
 END;
 holas(10);
 imprimir(uno, otro);

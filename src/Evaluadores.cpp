@@ -1,7 +1,5 @@
 #include "Evaluadores.h"
-
 #include <functional>
-
 #include "Nativo.h"
 #include "Funciones_nativas.h"
 #include "Exceptions.h"
@@ -78,10 +76,10 @@ namespace Evaluadores {
         if ((++it)->getValor() != "(")
             throw TokenError(*it);
         it++;
-        bool add_args = true;
+        bool add_args = true, end_args_fun = false;
         for (; it != fin_it; it++) {
-            if (it->getValor() == ")") {
-                add_args = false;
+            if (!end_args_fun && it->getValor() == ")") {
+                add_args = false, end_args_fun= true;
                 if (next(it)->getValor() != ":" && next(it, 2)->getTipo() != START_BLOCK && next(it, 3)->getTipo() != END)
                     throw TokenError(it->getLinea());
                 it += 4;
@@ -140,7 +138,6 @@ namespace Evaluadores {
             Variables scope_vars = args;
             return call_new_funcion(func, run, scope_vars);
         }
-
         vector<Valor> args = procesar_simple_args(++it, fin_it, vars);
         return call_native_func(token_func, args);
     }
@@ -299,13 +296,14 @@ namespace Evaluadores {
 
         if (next(it_pgma)->getTipo() == ASIGNACION) {
             it_pgma += 2;
-            if((it_pgma + 1)->getTipo() == END ){
-                variables.agregar(tk.getValor(), *it_pgma);
-                it_pgma++;
-                return;
-            }
             Stack stack = eval_expresion(it_pgma, fin_it, variables);
             auto expr = stack.get_stack();
+            if((it_pgma + 1)->getTipo() == END ){
+                variables.agregar(tk.getValor(), expr);
+                if(it_pgma + 1 != fin_it) it_pgma++;
+                return;
+            }
+
             if (expr.getLinea() != -1)
                 variables.agregar(tk.getValor(), expr);
             else {
