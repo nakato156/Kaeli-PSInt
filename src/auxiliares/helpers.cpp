@@ -26,6 +26,7 @@ bool Helpers::esOperador(char c, string operadores, int size) {
 
 bool Helpers::esEntero(string str) {
     for (char const &c : str) {
+        if(c == '-' || c == '+') continue;
         if (!isdigit(c))
             return false;
     }

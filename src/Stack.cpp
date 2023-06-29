@@ -107,7 +107,11 @@ Token Stack::get_stack() {
         if (valores.size() != 0)
             return valores[0];
         return Token("NADA", -1);
-    } else {
+    } 
+    else if(operadores.size() == 1 && valores.size() == 1 && (operadores[0].getValor() == "-" || operadores[0].getValor() == "+")){
+        return Token(string(operadores[0].getValor() + valores[0].getValor()), valores[0].getLinea());
+    }
+    else {
         vector<Token>::iterator it_op;
         Token token;
         for (it_op = operadores.begin(); it_op != operadores.end(); it_op++) {

@@ -1,5 +1,6 @@
 
 target_sources(${PROJECT_NAME} PRIVATE
+	EstandarLib.cpp
 	Array.cpp
 	definiciones.cpp
 	Env.cpp

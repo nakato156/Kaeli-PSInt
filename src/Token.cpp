@@ -53,6 +53,8 @@ Token::Token(string tk, int linea) {
         tipo = CONDICION;
     else if (tk == "funcion")
         tipo = FUNCION;
+    else if(tk == "importar" || tk == "de")
+        tipo = IMPORTACION;
     else if (!isdigit(tk[0]) && validIdentificador(tk))
         tipo = IDENTIFICADOR;
     else

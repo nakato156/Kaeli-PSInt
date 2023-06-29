@@ -18,7 +18,8 @@
 #define END_BLOCK 13
 #define FOR 14
 #define WHILE 15
+#define IMPORTACION 16
 #define MSG_INIT "Bienvenido."
 
 extern std::string Operadores;
-#define VERSION_PROGRAM "V1.0"
+#define VERSION_PROGRAM "V2.0"
