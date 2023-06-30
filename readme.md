@@ -6,7 +6,7 @@ Está destinado a estudiantes, para que se familiaricen con el mundo de la progr
 
 ## Compilación
 
-Con CMake 3.13 o más reciente:
+Con CMake 3.13 o más reciente y asegurarse de tener disponitble c++20 o superior:
 
 - Ejecuta el archivo `build.bat` en Windows o `build.sh` en Linux y el proyecto se compilará en la carpeta `build`.
 
@@ -42,7 +42,11 @@ Para descargar gcc y make:
     ```
     mingw32-make
     ```
-    Si no te funciona, prueba poner en la variable de entorno con la dirección de la carpeta de mingw32.
+    O:
+    ```
+    make
+    ```
+    Si no funciona, prueba poner en la variable de entorno con la dirección de la carpeta de mingw32.
 ## Sintaxis:
 
 Para asignar una variable elegimos la forma de python:
