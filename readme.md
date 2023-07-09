@@ -67,11 +67,10 @@ imprimir("number: ", number);
 Todos los lenguajes debe tener una forma de hacer condiciones, este lenguaje no es la excepción:
 ```
 si number==10:
-START;
 imprimir("Si, number es igual a 10.");
 END;
 ```
-Nota: `START;` indica el inicio y `END;` el final del bloque.
+Nota: `END;` indica el final del bloque.
 
 También existe el típico ciclo `for`, que tiene 2 variantes
 
@@ -123,5 +122,5 @@ El programa posee un modo interactivo, este aparece cuando se ejecuta el intérp
     ```
 
 ## Futuras actualizaciones:
-* Se quiere agregar color a los errores y un poco al intérprete, por lo que se utilizara la biblioteca ncurses para ello.
+* Se quiere agregar color a los errores y un poco al intérprete.
 * Implementación del bucle `while`

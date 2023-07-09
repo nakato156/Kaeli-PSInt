@@ -4,11 +4,11 @@ otro = "1hola " + "nop";
 
 Mybool = verdadero;
 
-si uno*2+2*2 == 6: START;
+si uno*2+2*2 == 6:
     uno = 10;
 END;
 
-funcion holas(arg1): START;
+funcion holas(arg1):
     hola = arg1;
     imprimir(hola);
 END;

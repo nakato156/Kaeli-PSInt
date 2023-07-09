@@ -95,9 +95,9 @@ void Evaluadores::eval_func(vector<Token>::iterator &it, vector<Token>::iterator
     for (; it != fin_it; it++) {
         if (!end_args_fun && it->getValor() == ")") {
             add_args = false, end_args_fun= true;
-            if (next(it)->getValor() != ":" && next(it, 2)->getTipo() != START_BLOCK && next(it, 3)->getTipo() != END)
+            if (next(it)->getTipo() != START_BLOCK)
                 throw TokenError(it->getLinea());
-            it += 4;
+            it += 2;
         }
         if (it->getValor() == ",")
             continue;
@@ -190,7 +190,7 @@ Stack Evaluadores::eval_expresion(vector<Token>::iterator &it, vector<Token>::it
 
     for (; it != fin_it; it++) {
         token = *it;
-        if (block && token.getValor() == ":")
+        if (block && token.getTipo() == START_BLOCK)
             break;
         if (token.getTipo() == END)
             break;
@@ -206,11 +206,10 @@ Stack Evaluadores::eval_expresion(vector<Token>::iterator &it, vector<Token>::it
         }
         myStack.agregar(Valor(token), it);
     }
-    if (block && it->getValor() != ":")
+    if (block && it->getTipo() != START_BLOCK)
         throw EOLError(it->getLinea());
     else if (!block && it->getTipo() != END)
         throw EOLError(it->getLinea());
-    // cout << myStack.get_stack() << endl;
     return myStack;
 }
 
@@ -218,13 +217,8 @@ void Evaluadores::eval_condicion(vector<Token>::iterator &it, vector<Token>::ite
     it++;
     Stack stack = eval_expresion(it, fin_it, vars, true);
     Valor expr = stack.get_stack();
-
-    it++;
     if (it->getTipo() != START_BLOCK)
         throw TokenError(it->getLinea());
-    it++;
-    if (it->getTipo() != END)
-        throw EOLError(it->getLinea());
     it++;
 
     vector<Token> tmp_tokens;
@@ -251,7 +245,7 @@ vector<Token> Evaluadores::procesar_bloque(vector<Token>::iterator &it, vector<T
         if (it->getTipo() == END_BLOCK && !(cont_start - 1)) {
             it++;
             break;
-        } else if (it->getValor() == ":")
+        } else if (it->getTipo() == START_BLOCK)
             cont_start++;
         bloque.push_back(*it);
     }

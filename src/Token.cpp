@@ -29,6 +29,8 @@ Token::Token(string tk, int linea) {
         tipo = ASIGNACION;
     else if (tk == ";")
         tipo = END;
+    else if (tk == ":")
+        tipo = START_BLOCK;
     else if (tk[0] == '"' && tk[tk.size() - 1] == '"') {
         tipo = STRING;
         valor = tk.substr(1, tk.size() - 2);
@@ -37,8 +39,6 @@ Token::Token(string tk, int linea) {
         precedencia = tipos_precedencia[tk];
     } else if (esEntero(tk))
         tipo = ENTERO;
-    else if (tk == "START")
-        tipo = START_BLOCK;
     else if (tk == "END")
         tipo = END_BLOCK;
     else if (tk == "NADA")

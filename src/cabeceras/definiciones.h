@@ -19,7 +19,7 @@
 #define FOR 14
 #define WHILE 15
 #define IMPORTACION 16
-#define MSG_INIT "Bienvenido."
+#define MSG_INIT "Bienvenido a Kaeli-PSInt."
 
 extern std::string Operadores;
-#define VERSION_PROGRAM "V2.0"
+#define VERSION_PROGRAM "V2.1"
