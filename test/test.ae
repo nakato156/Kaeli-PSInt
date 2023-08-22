@@ -1,0 +1,3 @@
+iterar x desde 1 hasta 100000:
+    imprimir(x);
+END;
