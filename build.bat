@@ -1,7 +1,9 @@
-if not %errorlevel%=0 goto :notfound
+@echo off
 
-if exist "build\"(
-    rmdir /S /Q "build"
+if not %errorlevel%==0 goto :notfound
+
+if exist "build\" ( 
+    rmdir /S /Q "build" 
 )
 
 md build
