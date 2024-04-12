@@ -1,0 +1,6 @@
+numero = 10;
+imprimir(i);
+
+mientras numero > 0:
+    numero = numero - 1;
+END;

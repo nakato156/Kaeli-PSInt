@@ -1,6 +1,6 @@
 
 target_sources(${PROJECT_NAME} PRIVATE
-	EstandarLib.cpp
+	LibEstandar/Mates.cpp
 	Array.cpp
 	definiciones.cpp
 	Env.cpp
@@ -18,5 +18,5 @@ target_sources(${PROJECT_NAME} PRIVATE
 )
 
 target_include_directories(${PROJECT_NAME}
-	PUBLIC cabeceras auxiliares
+	PUBLIC cabeceras auxiliares LibEstandar
 )
