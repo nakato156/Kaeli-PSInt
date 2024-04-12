@@ -308,8 +308,7 @@ void Evaluadores::eval_while(vector<Token>::iterator &it, vector<Token>::iterato
     if(it->getTipo() != START_BLOCK) throw TokenError(it->getLinea());
     it++;
 
-    vector<Token>::iterator it_cond = condicion_while.begin();
-    vector<Token>::iterator fin_it_cond = condicion_while.end();
+    vector<Token>::iterator it_cond = condicion_while.begin(), fin_it_cond = condicion_while.end();
 
     Token expr = eval_expresion(it_cond, fin_it_cond, vars, true).get_stack();
     auto bloque = procesar_bloque(it, fin_it);
