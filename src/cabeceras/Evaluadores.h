@@ -31,6 +31,8 @@ namespace Evaluadores {
     vector<Token> procesar_bloque(vector<Token>::iterator &it, vector<Token>::iterator &fin);
 
     void eval_for(vector<Token>::iterator &it, vector<Token>::iterator &fin_it, Variables &vars);
+    
+    void eval_while(vector<Token>::iterator &it, vector<Token>::iterator &fin_it, Variables &vars);
 
     void eval_identifier(vector<Token>::iterator &it_pgma, vector<Token>::iterator &fin_it, Variables &variables);
 

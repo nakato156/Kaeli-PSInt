@@ -301,6 +301,25 @@ void Evaluadores::eval_for(vector<Token>::iterator &it, vector<Token>::iterator 
     }
 }
 
+void Evaluadores::eval_while(vector<Token>::iterator &it, vector<Token>::iterator &fin_it, Variables &vars){
+    vector<Token> condicion_while;
+    while(it->getTipo() != START_BLOCK || it == fin_it) condicion_while.push_back(*(it++));
+
+    if(it->getTipo() != START_BLOCK) throw TokenError(it->getLinea());
+    it++;
+
+    vector<Token>::iterator it_cond = condicion_while.begin();
+    vector<Token>::iterator fin_it_cond = condicion_while.end();
+
+    Token expr = eval_expresion(it_cond, fin_it_cond, vars, true).get_stack();
+    auto bloque = procesar_bloque(it, fin_it);
+    
+    while(expr){
+        run(bloque, vars);
+        expr = eval_expresion(it_cond, fin_it_cond, vars, true).get_stack();
+    }
+}
+
 void Evaluadores::eval_identifier(vector<Token>::iterator &it_pgma, vector<Token>::iterator &fin_it, Variables &variables) {
     Token tk = *it_pgma;
 
@@ -333,6 +352,7 @@ void Evaluadores::run(vector<Token> &pgma, Variables &variables) {
         {CONDICION, &eval_condicion},
         {FUNCION, &eval_func},
         {FOR, &eval_for},
+        {WHILE, &eval_while},
     };
 
     vector<Token>::iterator iter = pgma.begin(), iter_end = pgma.end();
