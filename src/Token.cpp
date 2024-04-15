@@ -94,19 +94,21 @@ Token Token::operator==(Token &tk) {
 
     return Token(false, num_linea);
 };
-Token Token::operator>=(Token &tk) { return tk; };
-Token Token::operator<=(Token &tk) { return tk; };
-Token Token::operator>(Token &tk) { return tk; };
+Token Token::operator>=(Token &tk) { return Token(valor >= tk.valor, num_linea); };
+Token Token::operator<=(Token &tk) { return Token(valor <= tk.valor, num_linea); };
+Token Token::operator>(Token &tk) { return Token(valor > tk.valor, num_linea); };
 
 Token Token::operator<(Token &tk) {
-    if ((tk.tipo != tipo) && (tipo != ENTERO || tipo != FLOAT))
+    if ((tk.tipo != ENTERO || tk.tipo != FLOAT) && (tipo != ENTERO || tipo != FLOAT))
         throw TypeError(tk.getNombreTipo(), this->getNombreTipo(), num_linea);
-    return tk;
+    return Token(valor < tk.valor, num_linea);
 };
 
 Token Token::operator+(Token &tk) {
-    if (tk.tipo == ENTERO && ENTERO == tipo)
+    if ((tk.tipo == ENTERO && ENTERO == tipo))
         return Token(to_string(tk.parse<int>() + this->parse<int>()), num_linea);
+    else if(tk.tipo == FLOAT && tipo == FLOAT)
+        return Token(to_string(tk.parse<float>() + this->parse<float>()), num_linea);
     if (tk.tipo == STRING && STRING == tipo) {
         return Token('"' + tk.getValor() + this->valor + '"', num_linea);
     }
@@ -114,14 +116,16 @@ Token Token::operator+(Token &tk) {
 };
 
 Token Token::operator-(Token &tk) {
-    if (tk.tipo == ENTERO && tipo == ENTERO)
+    if ((tk.tipo == ENTERO && tipo == ENTERO))
         return Token(to_string(tk.parse<int>() - this->parse<int>()), num_linea);
+    else if (tk.tipo == FLOAT && tipo == FLOAT)
+        return Token(to_string(tk.parse<float>() - this->parse<float>()), num_linea);
     else
         throw TypeError(tk.getNombreTipo(), this->getNombreTipo(), num_linea);
 };
 
 Token Token::operator*(Token &tk) {
-    if (tk.tipo == ENTERO && ENTERO == tipo || tk.tipo == BOOL && tipo == ENTERO)
+    if ((tk.tipo == ENTERO && ENTERO == tipo) || (tk.tipo == BOOL && tipo == ENTERO) || (tk.tipo == FLOAT && tipo == FLOAT))
         return Token(to_string(tk.parse<int>() * this->parse<int>()), num_linea);
     else
         throw TypeError(tk.getNombreTipo(), this->getNombreTipo(), num_linea);
@@ -129,8 +133,10 @@ Token Token::operator*(Token &tk) {
 };
 
 Token Token::operator/(Token &tk) {
-    if (tk.tipo == ENTERO && ENTERO == tipo)
-        return Token(to_string(tk.parse<int>() / this->parse<int>()), num_linea);
+    if ((tk.tipo == ENTERO && tipo == ENTERO))
+        return Token(to_string(this->parse<int>() / tk.parse<int>()), num_linea);
+    else if(tk.tipo == FLOAT && tipo == FLOAT)
+        return Token(to_string(this->parse<float>() / tk.parse<float>()), num_linea);
     throw TypeError(tk.getNombreTipo(), this->getNombreTipo(), num_linea);
     return tk;
 };

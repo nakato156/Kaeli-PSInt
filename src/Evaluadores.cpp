@@ -302,10 +302,12 @@ void Evaluadores::eval_for(vector<Token>::iterator &it, vector<Token>::iterator 
 }
 
 void Evaluadores::eval_while(vector<Token>::iterator &it, vector<Token>::iterator &fin_it, Variables &vars){
+    it++;
     vector<Token> condicion_while;
     while(it->getTipo() != START_BLOCK || it == fin_it) condicion_while.push_back(*(it++));
-
+    
     if(it->getTipo() != START_BLOCK) throw TokenError(it->getLinea());
+    condicion_while.push_back(Token(string(":"), it->getLinea()));
     it++;
 
     vector<Token>::iterator it_cond = condicion_while.begin(), fin_it_cond = condicion_while.end();
@@ -314,7 +316,8 @@ void Evaluadores::eval_while(vector<Token>::iterator &it, vector<Token>::iterato
     auto bloque = procesar_bloque(it, fin_it);
     
     while(expr){
-        run(bloque, vars);
+        run(bloque, vars);        
+        it_cond = condicion_while.begin(), fin_it_cond = condicion_while.end();
         expr = eval_expresion(it_cond, fin_it_cond, vars, true).get_stack();
     }
 }

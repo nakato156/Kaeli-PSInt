@@ -14,12 +14,12 @@
 #define FUNCION 9
 #define ARRAY 10
 #define FLOAT 11
-#define START_BLOCK 12
-#define END_BLOCK 13
+#define START_BLOCK 12 // :
+#define END_BLOCK 13 // END
 #define FOR 14
 #define WHILE 15
 #define IMPORTACION 16
-#define MSG_INIT "Bienvenido a Kaeli-PSInt."
+#define MSG_INIT "Bienvenido a Kaeli."
 
 extern std::string Operadores;
-#define VERSION_PROGRAM "V2.1"
+#define VERSION_PROGRAM "V0.3beta"

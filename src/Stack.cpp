@@ -45,8 +45,9 @@ void Stack::agregar(Token tk, vector<Token>::iterator &it) {
     if (tk.getValor() == "<" || tk.getValor() == ">" || tk.getValor() == "=") {
         val2 = valores.back();
         valores.pop_back();
-        if (valores.size() == 0)
+        if (valores.size() == 0){
             tmp_val.push_back(val2);
+        }
         else {
             val1 = valores.back();
             valores.pop_back();
@@ -55,7 +56,9 @@ void Stack::agregar(Token tk, vector<Token>::iterator &it) {
 
             tmp_val.push_back(operar(val1, op, val2));
         }
+        
         operadores.push_back(tk);
+
         if (next(it)->getValor() == "=") {
             it++;
             operadores.push_back(*it);
@@ -102,7 +105,6 @@ Array Stack::get_array() { return array_tks; };
 
 Token Stack::get_stack() {
     string op;
-
     if (operadores.size() == 0) {
         if (valores.size() != 0)
             return valores[0];
@@ -120,7 +122,7 @@ Token Stack::get_stack() {
                 if (!tmp_val.size())
                     throw TokenError(*it_op);
                 tmp_val.push_back(*it_op);
-                if (next(it_op)->getValor() == "=")
+                if (next(it_op) != operadores.end() && next(it_op)->getValor() == "=")
                     tmp_val.push_back(*(++it_op));
             } else {
                 Token val2 = *(valores.begin());
@@ -135,7 +137,6 @@ Token Stack::get_stack() {
 
         if (tmp_val.size() > 0) {
             tmp_val.push_back(valores[0]);
-
             for (it_op = tmp_val.begin(); it_op != tmp_val.end(); it_op++) {
                 Token val1 = *it_op;
                 op = (++it_op)->getValor();
